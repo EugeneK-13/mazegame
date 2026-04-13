@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <title>Fun Maze 🌟</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;700;900&display=swap');
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
@@ -1172,10 +1173,63 @@ function createClouds(){
   });
 }
 
+// ===== TELEGRAM WEB APP INTEGRATION =====
+function initTelegram(){
+  const tg=window.Telegram?.WebApp;
+  if(!tg)return; // not running inside Telegram, that's fine
+
+  // Tell Telegram the app is ready
+  tg.ready();
+
+  // Expand to full screen
+  tg.expand();
+
+  // Match header color to game
+  tg.setHeaderColor('#87CEEB');
+  tg.setBackgroundColor('#87CEEB');
+
+  // Handle Telegram Back Button:
+  // Show it whenever we're NOT on the title screen,
+  // hide it on the title screen
+  tg.BackButton.onClick(()=>{
+    const active=document.querySelector('.screen.active');
+    if(!active)return;
+    const id=active.id;
+    if(id==='charScreen')showTitle();
+    else if(id==='levelScreen')showCharSelect();
+    else if(id==='gameScreen')showLevelSelect();
+    else if(id==='victoryScreen')showLevelSelect();
+    else if(id==='finalScreen')showCharSelect();
+    else tg.BackButton.hide();
+  });
+
+  // Patch showScreen to toggle Telegram back button visibility
+  const _origShowScreen=showScreen;
+  window.showScreen=function(id){
+    _origShowScreen(id);
+    if(id==='titleScreen') tg.BackButton.hide();
+    else tg.BackButton.show();
+  };
+
+  // Disable Telegram's swipe-to-close on game screen
+  // so swipe controls work correctly
+  tg.disableVerticalSwipes?.();
+
+  // Optionally greet the user by name
+  const user=tg.initDataUnsafe?.user;
+  if(user?.first_name){
+    const title=document.querySelector('.game-title');
+    if(title) title.title=`Hi, ${user.first_name}!`;
+  }
+
+  console.log('Telegram Web App initialized ✅');
+}
+
 // ===== INIT =====
 window.onload=()=>{
   createClouds();
   setupArrows();
+  initTelegram();
   document.addEventListener('touchmove',(e)=>{
     if(e.target.id==='gameCanvas')e.preventDefault();
   },{passive:false});
