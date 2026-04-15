@@ -186,10 +186,10 @@ let lang='en';
 const T={
   en:{
     title:'Fun\nMaze!',play:'🎮 Play!',chooseHero:'Choose your hero!',chooseLevel:'Choose Level!',back:'🔙 Back',
-    next:'Next ➡️',again:'🔄 Again',menu:'🏠 Menu',levelComplete:'Level\nComplete!',autoNext:'Next in ',
+    next:'Next ➡️',again:'🔄 Again',menu:'🏠 Menu',levelComplete:'Level\nCompleted!',autoNext:'Next in ',
     youWin:'You WIN!',finalSub:'All 30 levels done!\nYou are a true hero! 🌟',playAgain:'🎮 Play Again',
     level:'Level',correct:'🎉 Correct!',tryAgain:'❌ Try again!',wellDone:'🎉 Well done!',
-    notThat:'❌ Not that one!',amazing:'🎉 Amazing!',
+    notThat:'❌ Not that one!',amazing:'🎉 Amazing!',greatJob:'🌟 Great Job!',excellent:'⭐ Excellent!',
     tapColor:'🎨 Tap the ',dragKey:'🔑 Drag the key to the lock!',unlocked:'🎉 Unlocked!',
     tapAll:'Tap all ',there:'Exactly ',findThem:'Find all items in the maze first!',goFind:'Go collect them!',
     collectAll:'Collect all before exit!',notAllCollected:'Collect all items first! ',
@@ -211,7 +211,7 @@ const T={
     next:'Далее ➡️',again:'🔄 Ещё раз',menu:'🏠 Меню',levelComplete:'Уровень\nпройден!',autoNext:'Далее через ',
     youWin:'Ты победил!',finalSub:'Все 30 уровней пройдены!\nТы настоящий герой! 🌟',playAgain:'🎮 Играть снова',
     level:'Уровень',correct:'🎉 Правильно!',tryAgain:'❌ Попробуй ещё!',wellDone:'🎉 Молодец!',
-    notThat:'❌ Не то!',amazing:'🎉 Отлично!',
+    notThat:'❌ Не то!',amazing:'🎉 Отлично!',greatJob:'🌟 Умница!',excellent:'⭐ Превосходно!',
     tapColor:'🎨 Нажми на ',dragKey:'🔑 Перетащи ключ к замку!',unlocked:'🎉 Открыто!',
     tapAll:'Нажми все ',there:'Их ровно ',findThem:'Сначала собери все предметы в лабиринте!',goFind:'Иди собери!',
     collectAll:'Собери все предметы!',notAllCollected:'Сначала собери все! ',
@@ -230,6 +230,7 @@ const T={
   }
 };
 function t(k){return T[lang][k]||T.en[k]||k;}
+function randomSuccess(){const opts=['correct','wellDone','amazing','greatJob','excellent'];return t(opts[Math.floor(Math.random()*opts.length)]);}
 function toggleLang(){lang=lang==='en'?'ru':'en';document.getElementById('langBtn').textContent=lang==='en'?'🇷🇺 RU':'🇬🇧 EN';updateAllText();}
 function updateAllText(){
   document.getElementById('gameTitleText').innerHTML=t('title').replace('\n','<br>');
@@ -352,14 +353,14 @@ const MAZES=[
  [1,1,1,0,1,1,1,0,1],
  [1,0,0,0,0,0,0,0,1],
  [1,1,1,1,1,1,1,1,1]],
-// L10 9x9 - harder: spiral with dead ends
+// L10 9x9 - harder: multiple branches and dead ends
 [[1,1,1,1,1,1,1,1,1],
  [1,0,0,0,0,0,0,0,1],
- [1,0,1,1,1,1,1,0,1],
- [1,0,1,0,0,1,0,0,1],
- [1,0,1,0,1,1,1,0,1],
- [1,0,1,0,0,0,0,0,1],
- [1,0,1,1,1,1,1,0,1],
+ [1,0,1,1,1,0,1,0,1],
+ [1,0,1,0,0,0,1,0,1],
+ [1,0,1,0,1,0,1,0,1],
+ [1,0,0,0,1,0,0,0,1],
+ [1,1,1,0,1,1,1,0,1],
  [1,0,0,0,0,0,0,0,1],
  [1,1,1,1,1,1,1,1,1]],
 // L11 9x9 - harder: zigzag
@@ -486,16 +487,16 @@ const MAZES=[
  [1,0,1,0,1,0,1,0,1,0,1],
  [1,0,1,0,0,0,1,0,0,0,1],
  [1,1,1,1,1,1,1,1,1,1,1]],
-// L22 11x11 spiral
+// L22 11x11 open spiral - entry gap at bottom-left of inner ring
 [[1,1,1,1,1,1,1,1,1,1,1],
  [1,0,0,0,0,0,0,0,0,0,1],
  [1,0,1,1,1,1,1,1,1,0,1],
  [1,0,1,0,0,0,0,0,1,0,1],
  [1,0,1,0,1,1,1,0,1,0,1],
- [1,0,1,0,1,0,1,0,1,0,1],
+ [1,0,1,0,1,0,0,0,1,0,1],
  [1,0,1,0,1,1,1,0,1,0,1],
  [1,0,1,0,0,0,0,0,1,0,1],
- [1,0,1,1,1,1,1,1,1,0,1],
+ [1,0,1,1,1,0,1,1,1,0,1],
  [1,0,0,0,0,0,0,0,0,0,1],
  [1,1,1,1,1,1,1,1,1,1,1]],
 // L23 11x11 rooms
@@ -546,17 +547,17 @@ const MAZES=[
  [1,0,1,0,1,0,1,1,1,0,1],
  [1,0,1,0,0,0,0,0,0,0,1],
  [1,1,1,1,1,1,1,1,1,1,1]],
-// L27 11x11 - dense
+// L27 11x11 - dense grid with corridors
 [[1,1,1,1,1,1,1,1,1,1,1],
- [1,0,1,0,1,0,1,0,1,0,1],
- [1,0,1,0,1,0,1,0,1,0,1],
  [1,0,0,0,0,0,0,0,0,0,1],
- [1,0,1,0,1,1,1,0,1,0,1],
+ [1,0,1,0,1,0,1,0,1,0,1],
+ [1,0,1,0,1,0,1,0,1,0,1],
+ [1,0,0,0,1,1,1,0,0,0,1],
  [1,0,1,0,0,0,0,0,1,0,1],
  [1,0,1,1,1,0,1,1,1,0,1],
  [1,0,0,0,0,0,0,0,0,0,1],
  [1,0,1,0,1,0,1,0,1,0,1],
- [1,0,1,0,1,0,1,0,1,0,1],
+ [1,0,0,0,0,0,0,0,0,0,1],
  [1,1,1,1,1,1,1,1,1,1,1]],
 // L28 11x11 - asymmetric
 [[1,1,1,1,1,1,1,1,1,1,1],
@@ -634,7 +635,7 @@ function getInMazePuzzle(lvl){
   // Build pool of available puzzle types - more variety as levels increase
   const pool=[];
   // Always available
-  pool.push('number_seq','fruit_odd','color_seq','clothes_odd','bigger');
+  pool.push('number_seq','fruit_odd','color_seq','clothes_odd');
   if(lvl>=8) pool.push('animal_sound','simple_add','shape_pattern');
   if(lvl>=15) pool.push('number_add','color3_odd','size_order');
   // Pick one randomly
@@ -775,7 +776,7 @@ function buildIMP(type,lvl){
 // 15 different puzzle varieties
 const EXIT_PUZZLES=[
   'color_tap','drag_key','count_fruit','emoji_order','odd_one_out',
-  'number_pick','color_circles','emoji_order2','animal_match','bigger_pick',
+  'number_pick','color_circles','emoji_order2','animal_match','color_tap',
   'count_shapes','memory_tap','add_simple','complete_seq','shadow_match'
 ];
 function getExitPuzzleType(lvl){
@@ -901,7 +902,7 @@ function checkIMP(idx,chosenEnc,correctEnc){
   const chosen=decodeURIComponent(chosenEnc),correct=decodeURIComponent(correctEnc);
   const el=document.getElementById('impOpt'+idx);
   if(chosen===correct){
-    el.classList.add('correct');document.getElementById('impMsg').textContent=t('impRight');playCollect();
+    el.classList.add('correct');document.getElementById('impMsg').textContent=randomSuccess();playCollect();
     setTimeout(()=>{
       document.getElementById('inMazePuzzleOverlay').classList.remove('active');
       inMazePuzzleActive=false;
@@ -1115,40 +1116,40 @@ function closePuzzle(success){document.getElementById('puzzleOverlay').classList
 // Exit puzzle check functions
 function ep_checkColor(chosen,correct){
   const msg=document.getElementById('puzMsg');
-  if(chosen===correct){msg.textContent=t('correct');msg.style.color='#00796B';playCollect();setTimeout(()=>closePuzzle(true),700);}
+  if(chosen===correct){msg.textContent=randomSuccess();msg.style.color='#00796B';playCollect();setTimeout(()=>closePuzzle(true),700);}
   else{msg.textContent=t('tryAgain');msg.style.color='#CC2200';const cc2=document.querySelectorAll('.color-circle');cc2[chosen].style.opacity='0.3';cc2[chosen].style.pointerEvents='none';}
 }
 function ep_checkNumber(chosen,correct){
   const el=document.getElementById('numopt'+chosen);const msg=document.getElementById('puzMsg');
-  if(chosen===correct){if(el){el.style.background='#AAFFAA';el.style.border='5px solid #44CC44';}msg.textContent=t('wellDone');msg.style.color='#00796B';playCollect();setTimeout(()=>closePuzzle(true),700);}
+  if(chosen===correct){if(el){el.style.background='#AAFFAA';el.style.border='5px solid #44CC44';}msg.textContent=randomSuccess();msg.style.color='#00796B';playCollect();setTimeout(()=>closePuzzle(true),700);}
   else{if(el){el.style.background='#FFAAAA';el.style.border='5px solid #CC4444';}msg.textContent=t('tryAgain');msg.style.color='#CC2200';setTimeout(()=>{if(el){el.style.background='';el.style.border='5px solid #DDD';}},500);}
 }
 function ep_checkOdd(chosen,correct){
   const el=document.getElementById('odd'+chosen);const msg=document.getElementById('puzMsg');
-  if(chosen===correct){el.style.border='6px solid #44CC44';el.style.background='rgba(170,255,170,0.4)';msg.textContent=t('correct');msg.style.color='#00796B';playCollect();setTimeout(()=>closePuzzle(true),700);}
+  if(chosen===correct){el.style.border='6px solid #44CC44';el.style.background='rgba(170,255,170,0.4)';msg.textContent=randomSuccess();msg.style.color='#00796B';playCollect();setTimeout(()=>closePuzzle(true),700);}
   else{el.style.border='6px solid #FF4444';el.style.background='rgba(255,170,170,0.4)';msg.textContent=t('tryAgain');msg.style.color='#CC2200';setTimeout(()=>{el.style.border='5px solid transparent';el.style.background='';},500);}
 }
 function ep_checkTextOption(chosenEnc,correctEnc){
   const chosen=decodeURIComponent(chosenEnc),correct=decodeURIComponent(correctEnc);
   const msg=document.getElementById('puzMsg');
-  if(chosen===correct){msg.textContent=t('correct');msg.style.color='#00796B';playCollect();setTimeout(()=>closePuzzle(true),700);}
+  if(chosen===correct){msg.textContent=randomSuccess();msg.style.color='#00796B';playCollect();setTimeout(()=>closePuzzle(true),700);}
   else{msg.textContent=t('tryAgain');msg.style.color='#CC2200';}
 }
 function ep_clickApple(i,ok,needed){
   const el=document.getElementById('ap'+i);if(!el||el.dataset.done)return;const msg=document.getElementById('puzMsg');
-  if(ok){el.dataset.done='1';el.style.filter='drop-shadow(0 0 13px #FF6600)';el.style.transform='scale(1.25)';_pickCount++;playCollect();if(_pickCount>=needed){msg.textContent=t('wellDone');msg.style.color='#00796B';setTimeout(()=>{_pickCount=0;closePuzzle(true);},700);}}
+  if(ok){el.dataset.done='1';el.style.filter='drop-shadow(0 0 13px #FF6600)';el.style.transform='scale(1.25)';_pickCount++;playCollect();if(_pickCount>=needed){msg.textContent=randomSuccess();msg.style.color='#00796B';setTimeout(()=>{_pickCount=0;closePuzzle(true);},700);}}
   else{el.style.animation='shake 0.3s';msg.textContent=t('notThat');msg.style.color='#CC2200';setTimeout(()=>el.style.animation='',350);}
 }
 function ep_clickPiece(prefix,i,emojiEnc,orderEnc){
   const emoji=decodeURIComponent(emojiEnc),order=orderEnc.split(',').map(decodeURIComponent);
   const count=window._miniPuzzleCount||0,el=document.getElementById(prefix+i);const msg=document.getElementById('puzMsg');
   if(!el||el.dataset.done)return;
-  if(emoji===order[count]){el.classList.add('correct');el.dataset.done='1';window._miniPuzzleCount=count+1;playCollect();if(window._miniPuzzleCount>=order.length){msg.textContent=t('amazing');msg.style.color='#00796B';setTimeout(()=>closePuzzle(true),700);}}
+  if(emoji===order[count]){el.classList.add('correct');el.dataset.done='1';window._miniPuzzleCount=count+1;playCollect();if(window._miniPuzzleCount>=order.length){msg.textContent=randomSuccess();msg.style.color='#00796B';setTimeout(()=>closePuzzle(true),700);}}
   else{el.classList.add('wrong');msg.textContent=t('tryAgain');msg.style.color='#CC2200';setTimeout(()=>el.classList.remove('wrong'),400);}
 }
 function ep_clickColorCircle(i,ok,needed){
   const el=document.getElementById('cc'+i);if(!el||el.dataset.done)return;const msg=document.getElementById('puzMsg');
-  if(ok){el.dataset.done='1';el.style.transform='scale(1.2)';el.style.boxShadow='0 0 18px #FFD700';el.style.border='6px solid #FFD700';_pickCount++;playCollect();if(_pickCount>=needed){msg.textContent=t('wellDone');msg.style.color='#00796B';setTimeout(()=>{_pickCount=0;closePuzzle(true);},700);}}
+  if(ok){el.dataset.done='1';el.style.transform='scale(1.2)';el.style.boxShadow='0 0 18px #FFD700';el.style.border='6px solid #FFD700';_pickCount++;playCollect();if(_pickCount>=needed){msg.textContent=randomSuccess();msg.style.color='#00796B';setTimeout(()=>{_pickCount=0;closePuzzle(true);},700);}}
   else{el.style.animation='shake 0.3s';msg.textContent=t('notThat');msg.style.color='#CC2200';setTimeout(()=>el.style.animation='',350);}
 }
 function setupDrag(){
