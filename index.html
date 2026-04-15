@@ -5,10 +5,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <title>Fun Maze 🌟</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&family=Nunito+Sans:wght@700;900&display=swap" rel="stylesheet">
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;700;900&display=swap');
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
 body{font-family:'Nunito',sans-serif;overflow:hidden;width:100vw;height:100vh;background:#4DB6AC;touch-action:none;}
+/* Use Nunito (Google font, excellent Cyrillic support) everywhere */
+.game-font{font-family:'Nunito',sans-serif;font-weight:900;}
 #gameContainer{width:100vw;height:100vh;position:relative;overflow:hidden;}
 .screen{position:absolute;top:0;left:0;width:100%;height:100%;display:none;flex-direction:column;align-items:center;justify-content:flex-start;}
 .screen.active{display:flex;}
@@ -17,7 +21,7 @@ body{font-family:'Nunito',sans-serif;overflow:hidden;width:100vw;height:100vh;ba
 @keyframes sunPulse{0%,100%{box-shadow:0 0 30px #FFE03388;}50%{box-shadow:0 0 60px #FFE033CC;}}
 .cloud{position:absolute;background:rgba(255,255,255,0.65);border-radius:50px;animation:cloudFloat linear infinite;}
 @keyframes cloudFloat{0%{transform:translateX(-250px);}100%{transform:translateX(110vw);}}
-.btn{font-family:'Fredoka One',cursive;border:none;border-radius:25px;cursor:pointer;transition:all 0.15s;display:inline-flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 6px 0 rgba(0,0,0,0.2);touch-action:manipulation;}
+.btn{font-family:'Nunito',sans-serif;font-weight:900;border:none;border-radius:25px;cursor:pointer;transition:all 0.15s;display:inline-flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 6px 0 rgba(0,0,0,0.2);touch-action:manipulation;}
 .btn:active{transform:translateY(4px);box-shadow:0 2px 0 rgba(0,0,0,0.2);}
 .btn-big{font-size:30px;padding:18px 40px;border-radius:30px;}
 .btn-green{background:linear-gradient(145deg,#6EE86E,#3CC33C);color:white;}
@@ -25,64 +29,69 @@ body{font-family:'Nunito',sans-serif;overflow:hidden;width:100vw;height:100vh;ba
 .btn-yellow{background:linear-gradient(145deg,#FFE033,#FFBB00);color:#664400;}
 .btn-teal{background:linear-gradient(145deg,#4DB6AC,#00897B);color:white;}
 #titleScreen{justify-content:center;gap:16px;padding:20px;}
-.game-title{font-family:'Fredoka One',cursive;font-size:clamp(44px,10vw,84px);color:#E0F2F1;text-shadow:4px 4px 0 #004D40,8px 8px 0 rgba(0,0,0,0.12);text-align:center;line-height:1.15;animation:titleBounce 2s ease-in-out infinite;}
+.game-title{font-family:'Nunito',sans-serif;font-weight:900;font-size:clamp(42px,10vw,80px);color:#E0F2F1;text-shadow:4px 4px 0 #004D40,8px 8px 0 rgba(0,0,0,0.12);text-align:center;line-height:1.15;animation:titleBounce 2s ease-in-out infinite;}
 @keyframes titleBounce{0%,100%{transform:translateY(0);}50%{transform:translateY(-10px);}}
 #charScreen{padding:18px;gap:12px;overflow-y:auto;}
-.screen-title{font-family:'Fredoka One',cursive;font-size:clamp(28px,7vw,50px);color:#E0F2F1;text-shadow:3px 3px 0 #004D40;text-align:center;}
+.screen-title{font-family:'Nunito',sans-serif;font-weight:900;font-size:clamp(26px,7vw,48px);color:#E0F2F1;text-shadow:3px 3px 0 #004D40;text-align:center;}
 .char-grid{display:flex;flex-wrap:wrap;justify-content:center;gap:13px;width:100%;max-width:600px;}
 .char-card{background:white;border-radius:22px;padding:13px 15px;cursor:pointer;border:5px solid transparent;transition:all 0.2s;text-align:center;min-width:115px;flex:1;box-shadow:0 5px 18px rgba(0,0,0,0.14);}
 .char-card:hover,.char-card.selected{border-color:#26A69A;transform:scale(1.06);box-shadow:0 10px 28px rgba(38,166,154,0.5);}
 .char-emoji{font-size:58px;display:block;margin-bottom:6px;filter:drop-shadow(0 3px 6px rgba(0,0,0,0.3));}
-.char-name{font-family:'Fredoka One',cursive;font-size:18px;color:#333;}
+.char-name{font-family:'Nunito',sans-serif;font-weight:900;font-size:18px;color:#333;}
 #levelScreen{padding:14px;gap:10px;overflow-y:auto;}
 .level-grid{display:flex;flex-wrap:wrap;justify-content:center;gap:9px;width:100%;max-width:550px;padding-bottom:8px;}
-.level-btn{background:white;border-radius:16px;padding:9px 12px;cursor:pointer;border:4px solid #26A69A;transition:all 0.2s;text-align:center;min-width:85px;flex:1;box-shadow:0 4px 11px rgba(0,0,0,0.11);font-family:'Fredoka One',cursive;}
+.level-btn{background:white;border-radius:16px;padding:9px 12px;cursor:pointer;border:4px solid #26A69A;transition:all 0.2s;text-align:center;min-width:85px;flex:1;box-shadow:0 4px 11px rgba(0,0,0,0.11);}
 .level-btn:hover{transform:scale(1.08);box-shadow:0 8px 20px rgba(38,166,154,0.5);}
-.level-num{font-size:26px;color:#00796B;}
+.level-num{font-family:'Nunito',sans-serif;font-weight:900;font-size:24px;color:#00796B;}
 .level-stars{font-size:13px;}
 .level-name{font-size:11px;color:#888;}
 #gameScreen{flex-direction:column;align-items:center;background:linear-gradient(180deg,#4DB6AC,#80CBC4);}
 #gameHeader{width:100%;background:rgba(255,255,255,0.95);padding:8px 13px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 3px 12px rgba(0,0,0,0.12);z-index:10;flex-shrink:0;}
-.header-info{font-family:'Fredoka One',cursive;font-size:22px;color:#00796B;}
+.header-info{font-family:'Nunito',sans-serif;font-weight:900;font-size:22px;color:#00796B;}
 #canvasWrapper{flex:1;display:flex;align-items:center;justify-content:center;width:100%;overflow:hidden;padding:4px;}
 #gameCanvas{display:block;border-radius:15px;box-shadow:0 8px 28px rgba(0,0,0,0.24);touch-action:none;}
 #arrowControls{display:grid;grid-template-columns:repeat(3,62px);grid-template-rows:repeat(2,62px);gap:6px;padding:8px 8px calc(8px + env(safe-area-inset-bottom,0px)) 8px;flex-shrink:0;justify-content:center;background:rgba(77,182,172,0.4);}
 .arrow-btn{width:62px;height:62px;background:rgba(255,255,255,0.97);border:4px solid #26A69A;border-radius:16px;font-size:30px;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 4px 10px rgba(0,0,0,0.18);user-select:none;touch-action:manipulation;-webkit-user-select:none;}
 .arrow-btn:active{transform:scale(0.88);background:rgba(38,166,154,0.5);}
+/* ---- Collectible counter bar ---- */
+#collectBar{width:100%;background:rgba(255,255,255,0.9);padding:4px 14px;display:flex;align-items:center;gap:8px;font-family:'Nunito',sans-serif;font-weight:900;font-size:18px;color:#00796B;flex-shrink:0;border-bottom:2px solid rgba(38,166,154,0.3);}
+/* ---- Overlays ---- */
 #puzzleOverlay{position:absolute;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.55);display:none;align-items:center;justify-content:center;z-index:100;}
 #puzzleOverlay.active{display:flex;}
-.puzzle-box{background:white;border-radius:28px;padding:24px;max-width:92vw;width:410px;text-align:center;box-shadow:0 18px 55px rgba(0,0,0,0.34);}
-.puzzle-title{font-family:'Fredoka One',cursive;font-size:27px;color:#00796B;margin-bottom:12px;}
+.puzzle-box{background:white;border-radius:28px;padding:24px;max-width:92vw;width:420px;text-align:center;box-shadow:0 18px 55px rgba(0,0,0,0.34);}
+.puzzle-title{font-family:'Nunito',sans-serif;font-weight:900;font-size:26px;color:#00796B;margin-bottom:12px;}
 #inMazePuzzleOverlay{position:absolute;top:0;left:0;width:100%;height:100%;background:rgba(0,55,45,0.62);display:none;align-items:center;justify-content:center;z-index:110;}
 #inMazePuzzleOverlay.active{display:flex;}
 .imp-box{background:linear-gradient(145deg,#E0F7FA,#FFFFFF);border-radius:26px;padding:22px;max-width:92vw;width:390px;text-align:center;box-shadow:0 18px 55px rgba(0,0,0,0.38);border:4px solid #26A69A;}
-.imp-title{font-family:'Fredoka One',cursive;font-size:24px;color:#00796B;margin-bottom:10px;}
+.imp-title{font-family:'Nunito',sans-serif;font-weight:900;font-size:22px;color:#00796B;margin-bottom:10px;}
 .imp-options{display:flex;gap:13px;justify-content:center;margin:13px 0;flex-wrap:wrap;}
-.imp-opt{font-family:'Fredoka One',cursive;font-size:34px;background:#E0F2F1;border:4px solid #B2DFDB;border-radius:16px;width:78px;height:78px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.15s;box-shadow:0 4px 10px rgba(0,0,0,0.1);}
+.imp-opt{font-family:'Nunito',sans-serif;font-weight:900;font-size:30px;background:#E0F2F1;border:4px solid #B2DFDB;border-radius:16px;width:82px;height:82px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.15s;box-shadow:0 4px 10px rgba(0,0,0,0.1);}
 .imp-opt:active{transform:scale(0.9);}
 .imp-opt.correct{background:#AAFFAA;border-color:#44CC44;}
 .imp-opt.wrong{background:#FFAAAA;border-color:#CC4444;animation:shake 0.3s;}
+/* ---- Victory / Final ---- */
 #victoryScreen{justify-content:center;align-items:center;gap:14px;}
 #finalScreen{justify-content:center;align-items:center;gap:14px;}
 .victory-emoji{font-size:96px;animation:victoryPop 0.5s ease-out;}
 @keyframes victoryPop{0%{transform:scale(0);}80%{transform:scale(1.2);}100%{transform:scale(1);}}
-.victory-title{font-family:'Fredoka One',cursive;font-size:clamp(34px,8vw,66px);color:#E0F2F1;text-shadow:4px 4px 0 #004D40;text-align:center;}
+.victory-title{font-family:'Nunito',sans-serif;font-weight:900;font-size:clamp(32px,8vw,64px);color:#E0F2F1;text-shadow:4px 4px 0 #004D40;text-align:center;}
 #confettiCanvas{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:200;}
 #musicBtn,#musicBtn2{font-size:25px;background:white;border:3px solid #26A69A;border-radius:50%;width:46px;height:46px;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 3px 10px rgba(0,0,0,0.12);flex-shrink:0;}
-#langBtn{font-family:'Fredoka One',cursive;font-size:17px;background:white;border:3px solid #26A69A;border-radius:18px;padding:7px 13px;cursor:pointer;color:#00796B;box-shadow:0 3px 8px rgba(0,0,0,0.12);flex-shrink:0;}
-#homeBtn{font-family:'Fredoka One',cursive;font-size:21px;background:white;border:3px solid #26A69A;border-radius:17px;padding:7px 14px;cursor:pointer;color:#00796B;box-shadow:0 3px 8px rgba(0,0,0,0.12);}
+#langBtn{font-family:'Nunito',sans-serif;font-weight:900;font-size:17px;background:white;border:3px solid #26A69A;border-radius:18px;padding:7px 13px;cursor:pointer;color:#00796B;box-shadow:0 3px 8px rgba(0,0,0,0.12);flex-shrink:0;}
+#homeBtn{font-family:'Nunito',sans-serif;font-weight:900;font-size:20px;background:white;border:3px solid #26A69A;border-radius:17px;padding:7px 14px;cursor:pointer;color:#00796B;box-shadow:0 3px 8px rgba(0,0,0,0.12);}
 .color-circles{display:flex;gap:14px;justify-content:center;margin:11px 0;flex-wrap:wrap;}
-.color-circle{width:86px;height:86px;border-radius:50%;cursor:pointer;border:6px solid white;box-shadow:0 5px 14px rgba(0,0,0,0.18);transition:transform 0.15s;font-size:36px;display:flex;align-items:center;justify-content:center;}
+.color-circle{width:84px;height:84px;border-radius:50%;cursor:pointer;border:6px solid white;box-shadow:0 5px 14px rgba(0,0,0,0.18);transition:transform 0.15s;font-size:34px;display:flex;align-items:center;justify-content:center;}
 .color-circle:active{transform:scale(0.9);}
 .apple-row{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin:11px 0;}
-.apple-item{font-size:52px;cursor:pointer;transition:transform 0.15s;user-select:none;}
-.drag-area{min-height:175px;position:relative;background:#E0F7FA;border-radius:18px;margin:9px 0;overflow:hidden;}
-.mini-puzzle-grid{display:flex;gap:11px;justify-content:center;flex-wrap:wrap;margin:11px 0;}
-.puzzle-piece{background:#E0F2F1;border-radius:13px;width:80px;height:80px;font-size:36px;display:flex;align-items:center;justify-content:center;cursor:pointer;user-select:none;transition:all 0.2s;border:4px solid white;box-shadow:0 3px 10px rgba(0,0,0,0.1);}
+.apple-item{font-size:50px;cursor:pointer;transition:transform 0.15s;user-select:none;}
+.drag-area{min-height:170px;position:relative;background:#E0F7FA;border-radius:18px;margin:9px 0;overflow:hidden;}
+.mini-puzzle-grid{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:10px 0;}
+.puzzle-piece{background:#E0F2F1;border-radius:13px;width:76px;height:76px;font-size:34px;display:flex;align-items:center;justify-content:center;cursor:pointer;user-select:none;transition:all 0.2s;border:4px solid white;box-shadow:0 3px 10px rgba(0,0,0,0.1);}
 .puzzle-piece.correct{background:#AAFFAA;border-color:#44CC44;}
 .puzzle-piece.wrong{background:#FFAAAA;border-color:#CC4444;}
 .auto-next-bar{height:8px;background:rgba(255,255,255,0.3);border-radius:4px;margin-top:4px;width:75%;overflow:hidden;}
 .auto-next-fill{height:100%;background:#E0F2F1;border-radius:4px;}
+.puz-msg{font-family:'Nunito',sans-serif;font-weight:700;font-size:21px;margin-top:8px;min-height:30px;}
 @keyframes shake{0%,100%{transform:translateX(0);}25%{transform:translateX(-8px);}75%{transform:translateX(8px);}}
 </style>
 </head>
@@ -139,6 +148,7 @@ body{font-family:'Nunito',sans-serif;overflow:hidden;width:100vw;height:100vh;ba
     <div style="font-size:32px;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.3));" id="charDisplay">🐰</div>
     <button id="musicBtn2" onclick="toggleMusic()">🎵</button>
   </div>
+  <div id="collectBar"><span id="collectIcon">⭐</span><span id="collectCount">0/3</span></div>
   <div id="canvasWrapper"><canvas id="gameCanvas"></canvas></div>
   <div id="arrowControls">
     <div></div><div class="arrow-btn" id="btnUp">⬆️</div><div></div>
@@ -151,12 +161,12 @@ body{font-family:'Nunito',sans-serif;overflow:hidden;width:100vw;height:100vh;ba
   <div class="victory-emoji">🎉</div>
   <div class="victory-title" id="txtVictory">Level Complete!</div>
   <div style="font-size:46px;" id="victoryStars">⭐⭐⭐</div>
-  <div style="font-family:'Fredoka One',cursive;font-size:20px;color:#B2DFDB;" id="txtAutoNext">Next in 4...</div>
+  <div style="font-family:'Nunito',sans-serif;font-weight:700;font-size:20px;color:#B2DFDB;" id="txtAutoNext">Next in 4...</div>
   <div class="auto-next-bar"><div class="auto-next-fill" id="autoNextFill" style="width:100%;"></div></div>
   <div style="display:flex;gap:11px;flex-wrap:wrap;justify-content:center;margin-top:8px;">
-    <button class="btn btn-green" style="font-size:24px;padding:13px 24px;" onclick="nextLevelNow()" id="btnNext">Next ➡️</button>
-    <button class="btn btn-blue" style="font-size:24px;padding:13px 24px;" onclick="replayLevel()" id="btnAgain">🔄 Again</button>
-    <button class="btn btn-yellow" style="font-size:24px;padding:13px 24px;" onclick="showLevelSelect()" id="btnMenuV">🏠 Menu</button>
+    <button class="btn btn-green" style="font-size:24px;padding:13px 22px;" onclick="nextLevelNow()" id="btnNext">Next ➡️</button>
+    <button class="btn btn-blue" style="font-size:24px;padding:13px 22px;" onclick="replayLevel()" id="btnAgain">🔄 Again</button>
+    <button class="btn btn-yellow" style="font-size:24px;padding:13px 22px;" onclick="showLevelSelect()" id="btnMenuV">🏠 Menu</button>
   </div>
 </div>
 
@@ -164,7 +174,7 @@ body{font-family:'Nunito',sans-serif;overflow:hidden;width:100vw;height:100vh;ba
 <div id="finalScreen" class="screen sky-bg">
   <div style="font-size:86px;animation:victoryPop 1s;">🏆</div>
   <div class="victory-title" id="txtFinal">You WIN!</div>
-  <div style="font-family:'Fredoka One',cursive;font-size:24px;color:#B2DFDB;text-align:center;padding:0 16px;" id="txtFinalSub">All 30 levels done!<br>You are a true hero! 🌟</div>
+  <div style="font-family:'Nunito',sans-serif;font-weight:700;font-size:22px;color:#B2DFDB;text-align:center;padding:0 16px;" id="txtFinalSub">All 30 levels done!<br>You are a true hero! 🌟</div>
   <div style="font-size:64px;animation:titleBounce 1s ease-in-out infinite;">🎊🎉🎊</div>
   <button class="btn btn-big btn-teal" onclick="showCharSelect()" id="btnPlayAgain">🎮 Play Again</button>
 </div>
@@ -174,8 +184,50 @@ body{font-family:'Nunito',sans-serif;overflow:hidden;width:100vw;height:100vh;ba
 // ===== LANGUAGE =====
 let lang='en';
 const T={
-  en:{title:'Fun\nMaze!',play:'🎮 Play!',chooseHero:'Choose your hero!',chooseLevel:'Choose Level!',back:'🔙 Back',next:'Next ➡️',again:'🔄 Again',levelComplete:'Level\nComplete!',autoNext:'Next in ',youWin:'You WIN!',finalSub:'All 30 levels done!\nYou are a true hero! 🌟',playAgain:'🎮 Play Again',level:'Level',correct:'🎉 Correct!',tryAgain:'❌ Try again!',wellDone:'🎉 Well done!',notThat:'❌ Not that one!',amazing:'🎉 Amazing!',tapColor:'🎨 Tap ',dragKey:'🔑 Drag the key to the lock!',unlocked:'🎉 Unlocked!',tapAll:'Tap all ',there:'Exactly ',findThem:'Find them in the maze!',goFind:'Go find them!',tapOrder:'🧩 Tap in order!',howMany:'🔢 How many ',tapNum:'🔢 Tap the number ',different:'🎨 Which one is different?',findDiff:"Find the one that doesn't match!",tapAllColor:'🎨 Tap all ',circles:' circles!',tapColors:'🎨 Tap colors in order!',collected:'Got:',of:'of',impSolve:'🧩 Solve to collect!',impWrong:'❌ Wrong! Try again!',impRight:'🎉 Got it!',whatMissing:'What number is missing?',whatShape:'Which comes next?',whatFruit:'Which is different?',whatColor:'Which color comes next?',whatClothes:'Which is the odd one out?',sequence:'Tap in order:'},
-  ru:{title:'Весёлый\nЛабиринт!',play:'🎮 Играть!',chooseHero:'Выбери героя!',chooseLevel:'Выбери уровень!',back:'🔙 Назад',next:'Далее ➡️',again:'🔄 Ещё раз',levelComplete:'Уровень\nпройден!',autoNext:'Далее через ',youWin:'Ты победил!',finalSub:'Все 30 уровней пройдены!\nТы настоящий герой! 🌟',playAgain:'🎮 Играть снова',level:'Уровень',correct:'🎉 Правильно!',tryAgain:'❌ Попробуй ещё!',wellDone:'🎉 Молодец!',notThat:'❌ Не то!',amazing:'🎉 Отлично!',tapColor:'🎨 Нажми на ',dragKey:'🔑 Перетащи ключ к замку!',unlocked:'🎉 Открыто!',tapAll:'Нажми все ',there:'Их ровно ',findThem:'Найди их в лабиринте!',goFind:'Иди найди!',tapOrder:'🧩 Нажимай по порядку!',howMany:'🔢 Сколько ',tapNum:'🔢 Нажми цифру ',different:'🎨 Что лишнее?',findDiff:'Найди то, что не подходит!',tapAllColor:'🎨 Нажми все ',circles:' кружка!',tapColors:'🎨 Нажми цвета по порядку!',collected:'Собрано:',of:'из',impSolve:'🧩 Реши задачку чтобы собрать!',impWrong:'❌ Неверно! Попробуй снова!',impRight:'🎉 Верно!',whatMissing:'Какая цифра пропущена?',whatShape:'Что следует дальше?',whatFruit:'Что лишнее?',whatColor:'Какой цвет следующий?',whatClothes:'Что здесь лишнее?',sequence:'Нажимай по порядку:'}
+  en:{
+    title:'Fun\nMaze!',play:'🎮 Play!',chooseHero:'Choose your hero!',chooseLevel:'Choose Level!',back:'🔙 Back',
+    next:'Next ➡️',again:'🔄 Again',menu:'🏠 Menu',levelComplete:'Level\nComplete!',autoNext:'Next in ',
+    youWin:'You WIN!',finalSub:'All 30 levels done!\nYou are a true hero! 🌟',playAgain:'🎮 Play Again',
+    level:'Level',correct:'🎉 Correct!',tryAgain:'❌ Try again!',wellDone:'🎉 Well done!',
+    notThat:'❌ Not that one!',amazing:'🎉 Amazing!',
+    tapColor:'🎨 Tap the ',dragKey:'🔑 Drag the key to the lock!',unlocked:'🎉 Unlocked!',
+    tapAll:'Tap all ',there:'Exactly ',findThem:'Find all items in the maze first!',goFind:'Go collect them!',
+    collectAll:'Collect all before exit!',notAllCollected:'Collect all items first! ',
+    tapOrder:'🧩 Tap in order!',howMany:'🔢 How many ',tapNum:'🔢 Tap the number ',
+    different:'🎨 Which one is different?',findDiff:"Tap the odd one out!",
+    tapAllColor:'🎨 Tap all ',circles:' circles!',tapColors:'🎨 Tap in order!',
+    collected:'',of:'/',impSolve:'🧩 Solve the puzzle to collect!',
+    impWrong:'❌ Wrong! Try again!',impRight:'🎉 Got it!',
+    whatMissing:'What number is missing?',whatShape:'Which comes next?',
+    whatFruit:'Which is different?',whatColor:'Which color comes next?',
+    whatClothes:'Which is the odd one out?',
+    bigger:'Which is bigger?',smaller:'Which is smaller?',
+    whatSound:'What sound does this animal make?',
+    shadow:'Which shadow matches?',missing:'Which one is missing?',
+    simpleAdd:'How much is',plus:'plus',
+  },
+  ru:{
+    title:'Весёлый\nЛабиринт!',play:'🎮 Играть!',chooseHero:'Выбери героя!',chooseLevel:'Выбери уровень!',back:'🔙 Назад',
+    next:'Далее ➡️',again:'🔄 Ещё раз',menu:'🏠 Меню',levelComplete:'Уровень\nпройден!',autoNext:'Далее через ',
+    youWin:'Ты победил!',finalSub:'Все 30 уровней пройдены!\nТы настоящий герой! 🌟',playAgain:'🎮 Играть снова',
+    level:'Уровень',correct:'🎉 Правильно!',tryAgain:'❌ Попробуй ещё!',wellDone:'🎉 Молодец!',
+    notThat:'❌ Не то!',amazing:'🎉 Отлично!',
+    tapColor:'🎨 Нажми на ',dragKey:'🔑 Перетащи ключ к замку!',unlocked:'🎉 Открыто!',
+    tapAll:'Нажми все ',there:'Их ровно ',findThem:'Сначала собери все предметы в лабиринте!',goFind:'Иди собери!',
+    collectAll:'Собери все предметы!',notAllCollected:'Сначала собери все! ',
+    tapOrder:'🧩 Нажимай по порядку!',howMany:'🔢 Сколько ',tapNum:'🔢 Нажми цифру ',
+    different:'🎨 Что лишнее?',findDiff:'Нажми на лишнее!',
+    tapAllColor:'🎨 Нажми все ',circles:' кружка!',tapColors:'🎨 Нажми по порядку!',
+    collected:'',of:'/',impSolve:'🧩 Реши задачку чтобы собрать!',
+    impWrong:'❌ Неверно! Попробуй снова!',impRight:'🎉 Верно!',
+    whatMissing:'Какая цифра пропущена?',whatShape:'Что следует дальше?',
+    whatFruit:'Что лишнее?',whatColor:'Какой цвет следующий?',
+    whatClothes:'Что здесь лишнее?',
+    bigger:'Что больше?',smaller:'Что меньше?',
+    whatSound:'Какой звук издаёт животное?',
+    shadow:'Какая тень подходит?',missing:'Чего не хватает?',
+    simpleAdd:'Сколько будет',plus:'плюс',
+  }
 };
 function t(k){return T[lang][k]||T.en[k]||k;}
 function toggleLang(){lang=lang==='en'?'ru':'en';document.getElementById('langBtn').textContent=lang==='en'?'🇷🇺 RU':'🇬🇧 EN';updateAllText();}
@@ -188,7 +240,7 @@ function updateAllText(){
   document.getElementById('txtVictory').innerHTML=t('levelComplete').replace('\n','<br>');
   document.getElementById('btnNext').textContent=t('next');
   document.getElementById('btnAgain').textContent=t('again');
-  document.getElementById('btnMenuV').textContent=t('menu')||'🏠 Menu';
+  document.getElementById('btnMenuV').textContent=t('menu');
   document.getElementById('txtFinal').textContent=t('youWin');
   document.getElementById('txtFinalSub').innerHTML=t('finalSub').replace('\n','<br>');
   document.getElementById('btnPlayAgain').textContent=t('playAgain');
@@ -203,6 +255,7 @@ function playCollect(){playTone(880,0.12,'sine',0.3);setTimeout(()=>playTone(104
 function playDoor(){[392,523,659,784].forEach((f,i)=>setTimeout(()=>playTone(f,0.35,'triangle',0.35),i*90));}
 function playStep(){if(musicOn)playTone(280+Math.random()*60,0.04,'sine',0.04);}
 function playBump(){playTone(120,0.08,'square',0.15);}
+function playAlert(){playTone(330,0.15,'square',0.25);setTimeout(()=>playTone(220,0.15,'square',0.2),160);}
 function toggleMusic(){musicOn=!musicOn;document.querySelectorAll('#musicBtn,#musicBtn2').forEach(b=>b.textContent=musicOn?'🎵':'🔇');}
 
 // ===== CHARS =====
@@ -210,95 +263,527 @@ const CHARS=['🐰','🐶','🏎️','🤡','👶'];
 let selectedChar=0,currentLevel=0,completedLevels=[];
 
 // ===== 30 MAZES =====
+// Levels 1-9: 7x7 or 9x7/9x9 (easy)
+// Levels 10-14: 9x9 harder (more dead ends)
+// Levels 15-19: 11x9 (wider)
+// Levels 20-30: 11x11 (large, complex)
 const MAZES=[
-[[1,1,1,1,1,1,1],[1,0,0,0,0,0,1],[1,0,1,1,0,1,1],[1,0,0,1,0,0,1],[1,1,0,1,1,0,1],[1,0,0,0,0,0,1],[1,1,1,1,1,1,1]],
-[[1,1,1,1,1,1,1],[1,0,0,0,1,0,1],[1,0,1,0,0,0,1],[1,0,1,1,1,0,1],[1,0,0,0,1,0,1],[1,1,0,0,0,0,1],[1,1,1,1,1,1,1]],
-[[1,1,1,1,1,1,1],[1,0,1,0,0,0,1],[1,0,1,0,1,0,1],[1,0,0,0,1,0,1],[1,1,1,0,1,0,1],[1,0,0,0,0,0,1],[1,1,1,1,1,1,1]],
-[[1,1,1,1,1,1,1],[1,0,0,0,1,0,1],[1,1,1,0,1,0,1],[1,0,0,0,0,0,1],[1,0,1,1,1,0,1],[1,0,1,0,0,0,1],[1,0,0,0,1,0,1],[1,1,0,1,0,0,1],[1,1,1,1,1,1,1]],
-[[1,1,1,1,1,1,1],[1,0,1,0,0,0,1],[1,0,1,0,1,0,1],[1,0,0,0,1,0,1],[1,1,1,0,1,1,1],[1,0,0,0,0,0,1],[1,0,1,1,1,0,1],[1,0,0,0,0,0,1],[1,1,1,1,1,1,1]],
-[[1,1,1,1,1,1,1,1,1],[1,0,0,0,1,0,0,0,1],[1,0,1,0,1,0,1,0,1],[1,0,1,0,0,0,1,0,1],[1,0,1,1,1,1,1,0,1],[1,0,0,0,0,0,0,0,1],[1,1,1,0,1,0,1,0,1],[1,0,0,0,1,0,0,0,1],[1,1,1,1,1,1,1,1,1]],
-[[1,1,1,1,1,1,1,1,1],[1,0,1,0,0,0,1,0,1],[1,0,1,0,1,0,1,0,1],[1,0,0,0,1,0,0,0,1],[1,1,1,0,1,1,1,0,1],[1,0,0,0,0,0,0,0,1],[1,0,1,1,1,0,1,0,1],[1,0,0,0,0,0,1,0,1],[1,1,1,1,1,1,1,1,1]],
-[[1,1,1,1,1,1,1,1,1],[1,0,0,0,0,0,1,0,1],[1,1,1,1,0,1,1,0,1],[1,0,0,0,0,0,0,0,1],[1,0,1,1,1,1,1,0,1],[1,0,1,0,0,0,1,0,1],[1,0,1,0,1,0,1,0,1],[1,0,0,0,1,0,0,0,1],[1,1,1,1,1,1,1,1,1]],
-[[1,1,1,1,1,1,1,1,1],[1,0,0,0,1,0,0,0,1],[1,0,1,0,1,0,1,0,1],[1,0,1,0,0,0,1,0,1],[1,0,1,1,1,0,1,1,1],[1,0,0,0,1,0,0,0,1],[1,1,1,0,1,1,1,0,1],[1,0,0,0,0,0,0,0,1],[1,1,1,1,1,1,1,1,1]],
-[[1,1,1,1,1,1,1,1,1],[1,0,0,0,0,0,0,0,1],[1,0,1,1,1,1,1,0,1],[1,0,1,0,0,0,1,0,1],[1,0,1,0,1,0,1,0,1],[1,0,0,0,1,0,0,0,1],[1,1,1,0,1,1,1,0,1],[1,0,0,0,0,0,0,0,1],[1,1,1,1,1,1,1,1,1]],
-[[1,1,1,1,1,1,1,1,1],[1,0,0,0,0,0,0,0,1],[1,0,1,1,1,0,1,0,1],[1,0,1,0,0,0,1,0,1],[1,0,1,0,1,1,1,0,1],[1,0,0,0,1,0,0,0,1],[1,1,1,0,1,0,1,1,1],[1,0,0,0,0,0,0,0,1],[1,0,1,1,1,1,1,0,1],[1,0,0,0,0,0,0,0,1],[1,1,1,1,1,1,1,1,1]],
-[[1,1,1,1,1,1,1,1,1],[1,0,1,0,0,0,1,0,1],[1,0,1,0,1,0,1,0,1],[1,0,0,0,1,0,0,0,1],[1,1,1,0,1,1,1,0,1],[1,0,0,0,0,0,1,0,1],[1,0,1,1,1,0,1,0,1],[1,0,0,0,0,0,0,0,1],[1,0,1,1,1,1,1,0,1],[1,0,0,0,0,0,0,0,1],[1,1,1,1,1,1,1,1,1]],
-[[1,1,1,1,1,1,1,1,1],[1,0,0,0,1,0,0,0,1],[1,1,1,0,1,0,1,0,1],[1,0,0,0,0,0,1,0,1],[1,0,1,1,1,0,1,0,1],[1,0,0,0,1,0,0,0,1],[1,1,1,0,1,1,1,0,1],[1,0,0,0,0,0,1,0,1],[1,0,1,1,1,0,1,0,1],[1,0,0,0,0,0,0,0,1],[1,1,1,1,1,1,1,1,1]],
-[[1,1,1,1,1,1,1,1,1,1,1],[1,0,0,0,0,0,0,0,0,0,1],[1,0,1,1,1,0,1,1,1,0,1],[1,0,1,0,0,0,1,0,0,0,1],[1,0,1,0,1,1,1,0,1,0,1],[1,0,0,0,1,0,0,0,1,0,1],[1,1,1,0,1,0,1,1,1,0,1],[1,0,0,0,0,0,1,0,0,0,1],[1,0,1,1,1,0,1,0,1,0,1],[1,0,0,0,0,0,0,0,1,0,1],[1,1,1,1,1,1,1,1,1,1,1]],
-[[1,1,1,1,1,1,1,1,1,1,1],[1,0,1,0,0,0,0,0,1,0,1],[1,0,1,0,1,1,1,0,1,0,1],[1,0,0,0,1,0,0,0,0,0,1],[1,1,1,0,1,0,1,1,1,0,1],[1,0,0,0,0,0,1,0,0,0,1],[1,0,1,1,1,0,1,0,1,1,1],[1,0,0,0,1,0,0,0,1,0,1],[1,1,1,0,1,1,1,0,0,0,1],[1,0,0,0,0,0,0,0,1,0,1],[1,1,1,1,1,1,1,1,1,1,1]],
-[[1,1,1,1,1,1,1,1,1,1,1],[1,0,0,0,1,0,0,0,1,0,1],[1,0,1,0,1,0,1,0,1,0,1],[1,0,1,0,0,0,1,0,0,0,1],[1,0,1,1,1,0,1,1,1,0,1],[1,0,0,0,1,0,0,0,0,0,1],[1,1,1,0,1,1,1,0,1,1,1],[1,0,0,0,0,0,1,0,0,0,1],[1,0,1,1,1,0,1,0,1,0,1],[1,0,0,0,0,0,0,0,1,0,1],[1,1,1,1,1,1,1,1,1,1,1]],
-[[1,1,1,1,1,1,1,1,1,1,1],[1,0,0,0,0,0,1,0,0,0,1],[1,0,1,1,1,0,1,0,1,0,1],[1,0,1,0,0,0,0,0,1,0,1],[1,0,1,0,1,1,1,0,1,0,1],[1,0,0,0,1,0,0,0,0,0,1],[1,1,1,0,1,0,1,1,1,0,1],[1,0,0,0,0,0,1,0,0,0,1],[1,0,1,1,1,1,1,0,1,0,1],[1,0,0,0,0,0,0,0,1,0,1],[1,1,1,1,1,1,1,1,1,1,1]],
-[[1,1,1,1,1,1,1,1,1,1,1],[1,0,1,0,0,0,0,0,0,0,1],[1,0,1,0,1,1,1,1,1,0,1],[1,0,0,0,1,0,0,0,1,0,1],[1,1,1,0,1,0,1,0,1,0,1],[1,0,0,0,0,0,1,0,0,0,1],[1,0,1,1,1,0,1,1,1,0,1],[1,0,1,0,0,0,0,0,0,0,1],[1,0,1,0,1,1,1,1,1,0,1],[1,0,0,0,0,0,0,0,0,0,1],[1,1,1,1,1,1,1,1,1,1,1]],
-[[1,1,1,1,1,1,1,1,1,1,1],[1,0,0,0,0,0,0,0,1,0,1],[1,0,1,1,1,1,1,0,1,0,1],[1,0,1,0,0,0,1,0,0,0,1],[1,0,1,0,1,0,1,1,1,0,1],[1,0,0,0,1,0,0,0,1,0,1],[1,1,1,0,1,1,1,0,1,0,1],[1,0,0,0,0,0,0,0,1,0,1],[1,0,1,1,1,0,1,1,1,0,1],[1,0,0,0,0,0,1,0,0,0,1],[1,1,1,1,1,1,1,1,1,1,1]],
-[[1,1,1,1,1,1,1,1,1,1,1],[1,0,0,0,1,0,0,0,0,0,1],[1,0,1,0,1,0,1,1,1,0,1],[1,0,1,0,0,0,1,0,0,0,1],[1,0,1,1,1,0,1,0,1,1,1],[1,0,0,0,1,0,0,0,1,0,1],[1,1,1,0,1,1,1,0,1,0,1],[1,0,0,0,0,0,1,0,0,0,1],[1,0,1,1,1,0,1,1,1,0,1],[1,0,0,0,0,0,0,0,0,0,1],[1,1,1,1,1,1,1,1,1,1,1]],
-[[1,1,1,1,1,1,1,1,1,1,1],[1,0,0,0,0,0,1,0,0,0,1],[1,0,1,1,1,0,1,0,1,1,1],[1,0,1,0,0,0,0,0,1,0,1],[1,0,1,0,1,1,1,0,0,0,1],[1,0,0,0,1,0,0,0,1,0,1],[1,1,1,0,1,0,1,1,1,0,1],[1,0,0,0,0,0,1,0,0,0,1],[1,0,1,1,1,0,1,0,1,0,1],[1,0,0,0,0,0,0,0,1,0,1],[1,1,1,1,1,1,1,1,1,1,1]],
-[[1,1,1,1,1,1,1,1,1,1,1],[1,0,1,0,0,0,0,0,1,0,1],[1,0,1,0,1,1,1,0,0,0,1],[1,0,0,0,1,0,0,0,1,0,1],[1,1,1,0,1,0,1,1,1,0,1],[1,0,0,0,0,0,1,0,0,0,1],[1,0,1,1,1,0,1,0,1,1,1],[1,0,1,0,0,0,0,0,1,0,1],[1,0,1,0,1,1,1,0,0,0,1],[1,0,0,0,0,0,0,0,1,0,1],[1,1,1,1,1,1,1,1,1,1,1]],
-[[1,1,1,1,1,1,1,1,1,1,1],[1,0,0,0,1,0,0,0,1,0,1],[1,0,1,0,1,0,1,0,1,0,1],[1,0,1,0,0,0,1,0,0,0,1],[1,0,1,1,1,0,1,1,1,0,1],[1,0,0,0,0,0,0,0,0,0,1],[1,1,1,0,1,1,1,0,1,1,1],[1,0,0,0,1,0,0,0,1,0,1],[1,0,1,0,1,0,1,0,1,0,1],[1,0,1,0,0,0,1,0,0,0,1],[1,1,1,1,1,1,1,1,1,1,1]],
-[[1,1,1,1,1,1,1,1,1,1,1],[1,0,0,0,0,0,0,0,0,0,1],[1,0,1,1,1,0,1,1,1,0,1],[1,0,1,0,0,0,0,0,1,0,1],[1,0,1,0,1,1,1,0,1,0,1],[1,0,0,0,1,0,1,0,0,0,1],[1,1,1,0,1,0,1,0,1,1,1],[1,0,0,0,0,0,1,0,0,0,1],[1,0,1,1,1,0,1,1,1,0,1],[1,0,0,0,0,0,0,0,0,0,1],[1,1,1,1,1,1,1,1,1,1,1]],
-[[1,1,1,1,1,1,1,1,1,1,1],[1,0,1,0,0,0,1,0,0,0,1],[1,0,1,0,1,0,1,0,1,0,1],[1,0,0,0,1,0,0,0,1,0,1],[1,1,1,0,1,1,1,0,1,0,1],[1,0,0,0,0,0,0,0,1,0,1],[1,0,1,1,1,0,1,1,1,0,1],[1,0,1,0,0,0,1,0,0,0,1],[1,0,1,0,1,0,1,0,1,0,1],[1,0,0,0,1,0,0,0,1,0,1],[1,1,1,1,1,1,1,1,1,1,1]],
-[[1,1,1,1,1,1,1,1,1,1,1],[1,0,0,0,0,0,0,0,1,0,1],[1,0,1,1,1,1,1,0,1,0,1],[1,0,1,0,0,0,0,0,0,0,1],[1,0,1,0,1,1,1,1,1,0,1],[1,0,0,0,1,0,0,0,1,0,1],[1,1,1,0,1,0,1,0,1,0,1],[1,0,0,0,0,0,1,0,0,0,1],[1,0,1,1,1,0,1,1,1,0,1],[1,0,0,0,0,0,0,0,0,0,1],[1,1,1,1,1,1,1,1,1,1,1]],
-[[1,1,1,1,1,1,1,1,1,1,1],[1,0,0,0,1,0,0,0,0,0,1],[1,0,1,0,1,0,1,1,1,0,1],[1,0,1,0,0,0,1,0,0,0,1],[1,0,1,1,1,0,1,0,1,1,1],[1,0,0,0,0,0,0,0,1,0,1],[1,1,1,0,1,1,1,0,1,0,1],[1,0,0,0,1,0,0,0,1,0,1],[1,0,1,0,1,0,1,0,0,0,1],[1,0,1,0,0,0,1,0,1,0,1],[1,1,1,1,1,1,1,1,1,1,1]],
-[[1,1,1,1,1,1,1,1,1,1,1],[1,0,1,0,0,0,1,0,0,0,1],[1,0,1,0,1,0,1,0,1,0,1],[1,0,0,0,1,0,0,0,1,0,1],[1,1,1,0,1,1,1,0,1,0,1],[1,0,0,0,0,0,0,0,0,0,1],[1,0,1,1,1,0,1,1,1,0,1],[1,0,1,0,0,0,1,0,0,0,1],[1,0,1,0,1,0,1,0,1,0,1],[1,0,0,0,1,0,0,0,1,0,1],[1,1,1,1,1,1,1,1,1,1,1]],
-[[1,1,1,1,1,1,1,1,1,1,1],[1,0,0,0,0,0,0,0,0,0,1],[1,0,1,1,1,0,1,1,1,0,1],[1,0,1,0,0,0,1,0,1,0,1],[1,0,1,0,1,0,1,0,1,0,1],[1,0,0,0,1,0,0,0,1,0,1],[1,1,1,0,1,1,1,0,1,0,1],[1,0,0,0,0,0,0,0,0,0,1],[1,0,1,1,1,0,1,1,1,0,1],[1,0,0,0,0,0,0,0,0,0,1],[1,1,1,1,1,1,1,1,1,1,1]],
-[[1,1,1,1,1,1,1,1,1,1,1],[1,0,0,0,1,0,0,0,0,0,1],[1,0,1,0,1,0,1,1,1,0,1],[1,0,1,0,0,0,1,0,0,0,1],[1,0,1,1,1,0,1,0,1,1,1],[1,0,0,0,1,0,0,0,1,0,1],[1,1,1,0,1,1,1,0,1,0,1],[1,0,0,0,0,0,1,0,0,0,1],[1,0,1,1,1,0,1,1,1,0,1],[1,0,0,0,0,0,0,0,0,0,1],[1,1,1,1,1,1,1,1,1,1,1]],
+// L1 7x7 very easy
+[[1,1,1,1,1,1,1],
+ [1,0,0,0,0,0,1],
+ [1,0,1,1,0,1,1],
+ [1,0,0,1,0,0,1],
+ [1,1,0,1,1,0,1],
+ [1,0,0,0,0,0,1],
+ [1,1,1,1,1,1,1]],
+// L2 7x7
+[[1,1,1,1,1,1,1],
+ [1,0,0,0,1,0,1],
+ [1,0,1,0,0,0,1],
+ [1,0,1,1,1,0,1],
+ [1,0,0,0,1,0,1],
+ [1,1,0,0,0,0,1],
+ [1,1,1,1,1,1,1]],
+// L3 7x7
+[[1,1,1,1,1,1,1],
+ [1,0,1,0,0,0,1],
+ [1,0,1,0,1,0,1],
+ [1,0,0,0,1,0,1],
+ [1,1,1,0,1,0,1],
+ [1,0,0,0,0,0,1],
+ [1,1,1,1,1,1,1]],
+// L4 9x7
+[[1,1,1,1,1,1,1],
+ [1,0,0,0,1,0,1],
+ [1,1,1,0,1,0,1],
+ [1,0,0,0,0,0,1],
+ [1,0,1,1,1,0,1],
+ [1,0,1,0,0,0,1],
+ [1,0,0,0,1,0,1],
+ [1,1,0,1,0,0,1],
+ [1,1,1,1,1,1,1]],
+// L5 9x7
+[[1,1,1,1,1,1,1],
+ [1,0,1,0,0,0,1],
+ [1,0,1,0,1,0,1],
+ [1,0,0,0,1,0,1],
+ [1,1,1,0,1,1,1],
+ [1,0,0,0,0,0,1],
+ [1,0,1,1,1,0,1],
+ [1,0,0,0,0,0,1],
+ [1,1,1,1,1,1,1]],
+// L6 9x9
+[[1,1,1,1,1,1,1,1,1],
+ [1,0,0,0,1,0,0,0,1],
+ [1,0,1,0,1,0,1,0,1],
+ [1,0,1,0,0,0,1,0,1],
+ [1,0,1,1,1,1,1,0,1],
+ [1,0,0,0,0,0,0,0,1],
+ [1,1,1,0,1,0,1,0,1],
+ [1,0,0,0,1,0,0,0,1],
+ [1,1,1,1,1,1,1,1,1]],
+// L7 9x9
+[[1,1,1,1,1,1,1,1,1],
+ [1,0,1,0,0,0,1,0,1],
+ [1,0,1,0,1,0,1,0,1],
+ [1,0,0,0,1,0,0,0,1],
+ [1,1,1,0,1,1,1,0,1],
+ [1,0,0,0,0,0,0,0,1],
+ [1,0,1,1,1,0,1,0,1],
+ [1,0,0,0,0,0,1,0,1],
+ [1,1,1,1,1,1,1,1,1]],
+// L8 9x9
+[[1,1,1,1,1,1,1,1,1],
+ [1,0,0,0,0,0,1,0,1],
+ [1,1,1,1,0,1,1,0,1],
+ [1,0,0,0,0,0,0,0,1],
+ [1,0,1,1,1,1,1,0,1],
+ [1,0,1,0,0,0,1,0,1],
+ [1,0,1,0,1,0,1,0,1],
+ [1,0,0,0,1,0,0,0,1],
+ [1,1,1,1,1,1,1,1,1]],
+// L9 9x9
+[[1,1,1,1,1,1,1,1,1],
+ [1,0,0,0,1,0,0,0,1],
+ [1,0,1,0,1,0,1,0,1],
+ [1,0,1,0,0,0,1,0,1],
+ [1,0,1,1,1,0,1,1,1],
+ [1,0,0,0,1,0,0,0,1],
+ [1,1,1,0,1,1,1,0,1],
+ [1,0,0,0,0,0,0,0,1],
+ [1,1,1,1,1,1,1,1,1]],
+// L10 9x9 - harder: spiral with dead ends
+[[1,1,1,1,1,1,1,1,1],
+ [1,0,0,0,0,0,0,0,1],
+ [1,0,1,1,1,1,1,0,1],
+ [1,0,1,0,0,1,0,0,1],
+ [1,0,1,0,1,1,1,0,1],
+ [1,0,1,0,0,0,0,0,1],
+ [1,0,1,1,1,1,1,0,1],
+ [1,0,0,0,0,0,0,0,1],
+ [1,1,1,1,1,1,1,1,1]],
+// L11 9x9 - harder: zigzag
+[[1,1,1,1,1,1,1,1,1],
+ [1,0,1,0,1,0,1,0,1],
+ [1,0,1,0,1,0,1,0,1],
+ [1,0,0,0,1,0,0,0,1],
+ [1,1,1,0,1,1,1,0,1],
+ [1,0,0,0,0,0,1,0,1],
+ [1,0,1,1,1,0,1,0,1],
+ [1,0,0,0,0,0,0,0,1],
+ [1,1,1,1,1,1,1,1,1]],
+// L12 9x9 - harder: many branches
+[[1,1,1,1,1,1,1,1,1],
+ [1,0,0,0,1,0,0,0,1],
+ [1,1,1,0,1,0,1,1,1],
+ [1,0,0,0,0,0,0,0,1],
+ [1,0,1,1,1,1,1,0,1],
+ [1,0,0,0,0,0,1,0,1],
+ [1,1,1,0,1,0,0,0,1],
+ [1,0,0,0,1,1,1,0,1],
+ [1,1,1,1,1,1,1,1,1]],
+// L13 9x9 - harder: long corridor then maze
+[[1,1,1,1,1,1,1,1,1],
+ [1,0,0,0,0,0,0,0,1],
+ [1,0,1,1,1,0,1,1,1],
+ [1,0,1,0,0,0,1,0,1],
+ [1,0,1,0,1,0,1,0,1],
+ [1,0,0,0,1,0,0,0,1],
+ [1,1,1,0,1,1,1,0,1],
+ [1,0,0,0,0,0,0,0,1],
+ [1,1,1,1,1,1,1,1,1]],
+// L14 9x9 - harder
+[[1,1,1,1,1,1,1,1,1],
+ [1,0,1,0,0,0,0,0,1],
+ [1,0,1,0,1,1,1,0,1],
+ [1,0,0,0,1,0,0,0,1],
+ [1,1,1,0,1,0,1,1,1],
+ [1,0,0,0,0,0,0,0,1],
+ [1,0,1,1,1,0,1,0,1],
+ [1,0,0,0,0,0,1,0,1],
+ [1,1,1,1,1,1,1,1,1]],
+// L15 11x9 - step up to wider
+[[1,1,1,1,1,1,1,1,1],
+ [1,0,0,0,0,0,0,0,1],
+ [1,0,1,1,1,0,1,0,1],
+ [1,0,1,0,0,0,1,0,1],
+ [1,0,1,0,1,1,1,0,1],
+ [1,0,0,0,1,0,0,0,1],
+ [1,1,1,0,1,0,1,1,1],
+ [1,0,0,0,0,0,0,0,1],
+ [1,0,1,1,1,1,1,0,1],
+ [1,0,0,0,0,0,0,0,1],
+ [1,1,1,1,1,1,1,1,1]],
+// L16 11x9
+[[1,1,1,1,1,1,1,1,1],
+ [1,0,1,0,0,0,1,0,1],
+ [1,0,1,0,1,0,1,0,1],
+ [1,0,0,0,1,0,0,0,1],
+ [1,1,1,0,1,1,1,0,1],
+ [1,0,0,0,0,0,1,0,1],
+ [1,0,1,1,1,0,1,0,1],
+ [1,0,0,0,0,0,0,0,1],
+ [1,0,1,1,1,1,1,0,1],
+ [1,0,0,0,0,0,0,0,1],
+ [1,1,1,1,1,1,1,1,1]],
+// L17 11x9
+[[1,1,1,1,1,1,1,1,1],
+ [1,0,0,0,1,0,0,0,1],
+ [1,1,1,0,1,0,1,0,1],
+ [1,0,0,0,0,0,1,0,1],
+ [1,0,1,1,1,0,1,0,1],
+ [1,0,0,0,1,0,0,0,1],
+ [1,1,1,0,1,1,1,0,1],
+ [1,0,0,0,0,0,1,0,1],
+ [1,0,1,1,1,0,1,0,1],
+ [1,0,0,0,0,0,0,0,1],
+ [1,1,1,1,1,1,1,1,1]],
+// L18 11x9 - many dead ends
+[[1,1,1,1,1,1,1,1,1],
+ [1,0,0,0,1,0,1,0,1],
+ [1,0,1,0,0,0,1,0,1],
+ [1,0,1,1,1,0,1,0,1],
+ [1,0,0,0,1,0,0,0,1],
+ [1,1,1,0,1,1,1,0,1],
+ [1,0,0,0,0,0,0,0,1],
+ [1,0,1,0,1,0,1,1,1],
+ [1,0,1,0,1,0,0,0,1],
+ [1,0,0,0,0,0,1,0,1],
+ [1,1,1,1,1,1,1,1,1]],
+// L19 11x9
+[[1,1,1,1,1,1,1,1,1],
+ [1,0,0,0,0,0,0,0,1],
+ [1,0,1,1,1,0,1,1,1],
+ [1,0,1,0,1,0,1,0,1],
+ [1,0,0,0,1,0,0,0,1],
+ [1,1,1,0,1,1,1,0,1],
+ [1,0,0,0,0,0,0,0,1],
+ [1,0,1,0,1,0,1,0,1],
+ [1,0,1,0,1,0,1,0,1],
+ [1,0,0,0,0,0,0,0,1],
+ [1,1,1,1,1,1,1,1,1]],
+// L20 11x11 - large complex maze
+[[1,1,1,1,1,1,1,1,1,1,1],
+ [1,0,0,0,0,0,0,0,0,0,1],
+ [1,0,1,1,1,0,1,1,1,0,1],
+ [1,0,1,0,0,0,1,0,0,0,1],
+ [1,0,1,0,1,1,1,0,1,0,1],
+ [1,0,0,0,1,0,0,0,1,0,1],
+ [1,1,1,0,1,0,1,1,1,0,1],
+ [1,0,0,0,0,0,1,0,0,0,1],
+ [1,0,1,1,1,0,1,0,1,0,1],
+ [1,0,0,0,0,0,0,0,1,0,1],
+ [1,1,1,1,1,1,1,1,1,1,1]],
+// L21 11x11
+[[1,1,1,1,1,1,1,1,1,1,1],
+ [1,0,0,0,1,0,0,0,1,0,1],
+ [1,0,1,0,1,0,1,0,1,0,1],
+ [1,0,1,0,0,0,1,0,0,0,1],
+ [1,0,1,1,1,0,1,1,1,0,1],
+ [1,0,0,0,0,0,0,0,0,0,1],
+ [1,1,1,0,1,1,1,0,1,1,1],
+ [1,0,0,0,1,0,0,0,1,0,1],
+ [1,0,1,0,1,0,1,0,1,0,1],
+ [1,0,1,0,0,0,1,0,0,0,1],
+ [1,1,1,1,1,1,1,1,1,1,1]],
+// L22 11x11 spiral
+[[1,1,1,1,1,1,1,1,1,1,1],
+ [1,0,0,0,0,0,0,0,0,0,1],
+ [1,0,1,1,1,1,1,1,1,0,1],
+ [1,0,1,0,0,0,0,0,1,0,1],
+ [1,0,1,0,1,1,1,0,1,0,1],
+ [1,0,1,0,1,0,1,0,1,0,1],
+ [1,0,1,0,1,1,1,0,1,0,1],
+ [1,0,1,0,0,0,0,0,1,0,1],
+ [1,0,1,1,1,1,1,1,1,0,1],
+ [1,0,0,0,0,0,0,0,0,0,1],
+ [1,1,1,1,1,1,1,1,1,1,1]],
+// L23 11x11 rooms
+[[1,1,1,1,1,1,1,1,1,1,1],
+ [1,0,0,0,1,0,0,0,1,0,1],
+ [1,0,1,0,1,0,1,0,0,0,1],
+ [1,0,1,0,0,0,1,1,1,0,1],
+ [1,0,1,1,1,0,1,0,0,0,1],
+ [1,0,0,0,0,0,0,0,1,0,1],
+ [1,1,1,0,1,1,1,0,1,0,1],
+ [1,0,0,0,1,0,0,0,1,0,1],
+ [1,0,1,0,1,0,1,1,1,0,1],
+ [1,0,1,0,0,0,0,0,0,0,1],
+ [1,1,1,1,1,1,1,1,1,1,1]],
+// L24 11x11 - long path
+[[1,1,1,1,1,1,1,1,1,1,1],
+ [1,0,1,0,0,0,0,0,0,0,1],
+ [1,0,1,0,1,1,1,1,1,0,1],
+ [1,0,0,0,1,0,0,0,1,0,1],
+ [1,1,1,0,1,0,1,0,1,0,1],
+ [1,0,0,0,0,0,1,0,0,0,1],
+ [1,0,1,1,1,0,1,1,1,0,1],
+ [1,0,1,0,0,0,0,0,0,0,1],
+ [1,0,1,0,1,1,1,1,1,0,1],
+ [1,0,0,0,0,0,0,0,0,0,1],
+ [1,1,1,1,1,1,1,1,1,1,1]],
+// L25 11x11 - complex branches
+[[1,1,1,1,1,1,1,1,1,1,1],
+ [1,0,0,0,0,0,1,0,0,0,1],
+ [1,0,1,1,1,0,1,0,1,0,1],
+ [1,0,1,0,0,0,0,0,1,0,1],
+ [1,0,1,0,1,1,1,0,1,0,1],
+ [1,0,0,0,1,0,0,0,1,0,1],
+ [1,1,1,0,1,0,1,1,1,0,1],
+ [1,0,0,0,0,0,1,0,0,0,1],
+ [1,0,1,1,1,0,1,0,1,1,1],
+ [1,0,0,0,0,0,0,0,0,0,1],
+ [1,1,1,1,1,1,1,1,1,1,1]],
+// L26 11x11 - twisting
+[[1,1,1,1,1,1,1,1,1,1,1],
+ [1,0,0,0,1,0,0,0,0,0,1],
+ [1,0,1,0,1,0,1,1,1,0,1],
+ [1,0,1,0,0,0,1,0,0,0,1],
+ [1,0,1,1,1,0,1,0,1,0,1],
+ [1,0,0,0,0,0,0,0,1,0,1],
+ [1,1,1,0,1,1,1,0,1,0,1],
+ [1,0,0,0,1,0,0,0,0,0,1],
+ [1,0,1,0,1,0,1,1,1,0,1],
+ [1,0,1,0,0,0,0,0,0,0,1],
+ [1,1,1,1,1,1,1,1,1,1,1]],
+// L27 11x11 - dense
+[[1,1,1,1,1,1,1,1,1,1,1],
+ [1,0,1,0,1,0,1,0,1,0,1],
+ [1,0,1,0,1,0,1,0,1,0,1],
+ [1,0,0,0,0,0,0,0,0,0,1],
+ [1,0,1,0,1,1,1,0,1,0,1],
+ [1,0,1,0,0,0,0,0,1,0,1],
+ [1,0,1,1,1,0,1,1,1,0,1],
+ [1,0,0,0,0,0,0,0,0,0,1],
+ [1,0,1,0,1,0,1,0,1,0,1],
+ [1,0,1,0,1,0,1,0,1,0,1],
+ [1,1,1,1,1,1,1,1,1,1,1]],
+// L28 11x11 - asymmetric
+[[1,1,1,1,1,1,1,1,1,1,1],
+ [1,0,0,0,0,0,0,0,1,0,1],
+ [1,0,1,1,1,1,1,0,1,0,1],
+ [1,0,1,0,0,0,0,0,0,0,1],
+ [1,0,1,0,1,1,1,1,1,0,1],
+ [1,0,0,0,1,0,0,0,1,0,1],
+ [1,1,1,0,1,0,1,0,1,0,1],
+ [1,0,0,0,0,0,1,0,0,0,1],
+ [1,0,1,1,1,0,1,1,1,0,1],
+ [1,0,0,0,0,0,0,0,0,0,1],
+ [1,1,1,1,1,1,1,1,1,1,1]],
+// L29 11x11 - very complex
+[[1,1,1,1,1,1,1,1,1,1,1],
+ [1,0,1,0,0,0,1,0,0,0,1],
+ [1,0,1,0,1,0,1,0,1,0,1],
+ [1,0,0,0,1,0,0,0,1,0,1],
+ [1,1,1,0,1,1,1,0,1,0,1],
+ [1,0,0,0,0,0,0,0,1,0,1],
+ [1,0,1,1,1,0,1,0,1,0,1],
+ [1,0,1,0,0,0,1,0,0,0,1],
+ [1,0,1,0,1,0,1,1,1,0,1],
+ [1,0,0,0,1,0,0,0,0,0,1],
+ [1,1,1,1,1,1,1,1,1,1,1]],
+// L30 11x11 - hardest
+[[1,1,1,1,1,1,1,1,1,1,1],
+ [1,0,0,0,1,0,1,0,0,0,1],
+ [1,0,1,0,1,0,1,0,1,0,1],
+ [1,0,1,0,0,0,0,0,1,0,1],
+ [1,0,1,1,1,0,1,1,1,0,1],
+ [1,0,0,0,0,0,0,0,0,0,1],
+ [1,1,1,0,1,1,1,0,1,1,1],
+ [1,0,0,0,1,0,0,0,1,0,1],
+ [1,0,1,0,1,0,1,0,0,0,1],
+ [1,0,1,0,0,0,1,0,1,0,1],
+ [1,1,1,1,1,1,1,1,1,1,1]],
 ];
 
-const STARTS=[[5,1],[5,2],[5,1],[7,1],[7,1],[7,1],[7,1],[7,1],[7,1],[7,1],[9,1],[9,1],[9,1],[9,1],[9,1],[9,1],[9,1],[9,1],[9,1],[9,1],[9,1],[9,1],[9,1],[9,1],[9,1],[9,1],[9,1],[9,1],[9,1],[9,1]];
-const ENDS=[[1,5],[1,3],[1,5],[1,5],[1,5],[1,7],[1,7],[1,7],[1,7],[1,7],[1,7],[1,7],[1,7],[1,9],[1,9],[1,9],[1,9],[1,9],[1,9],[1,9],[1,9],[1,9],[1,9],[1,9],[1,9],[1,9],[1,9],[1,9],[1,9],[1,9]];
+const STARTS=[
+  [5,1],[5,2],[5,1],[7,1],[7,1],  // L1-5
+  [7,1],[7,1],[7,1],[7,1],[7,1],  // L6-10
+  [7,1],[7,1],[7,1],[7,1],[9,1],  // L11-15
+  [9,1],[9,1],[9,1],[9,1],[9,1],  // L16-20
+  [9,1],[9,1],[9,1],[9,1],[9,1],  // L21-25
+  [9,1],[9,1],[9,1],[9,1],[9,1],  // L26-30
+];
+const ENDS=[
+  [1,5],[1,3],[1,5],[1,5],[1,5],  // L1-5
+  [1,7],[1,7],[1,7],[1,7],[1,7],  // L6-10
+  [1,7],[1,7],[1,7],[1,7],[1,7],  // L11-15
+  [1,7],[1,7],[1,7],[1,7],[1,9],  // L16-20
+  [1,9],[1,9],[1,9],[1,9],[1,9],  // L21-25
+  [1,9],[1,9],[1,9],[1,9],[1,9],  // L26-30
+];
 
 const LEVEL_BG=['#E8F5FF','#E8FFE8','#FFF0E8','#E8E8FF','#FFF8E8','#FFE8F0','#E8FFF8','#F0E8FF','#FFF5E8','#E8FFE0','#E0F0FF','#F0FFE8','#FFE8E8','#E8F0FF','#F8FFE8','#FFE0F0','#E0FFE8','#F5E8FF','#FFE8D0','#E8FFD0','#E8F5FF','#E8FFE8','#FFF0E8','#E8E8FF','#FFF8E8','#FFE8F0','#E8FFF8','#F0E8FF','#FFF5E8','#E8FFE0'];
 const WALL_COLORS=['#5599FF','#33AA55','#CC6633','#6633CC','#FF9922','#FF4488','#22CCAA','#9944CC','#CC8822','#44AA66','#3366CC','#55BB44','#CC4444','#7744CC','#AACC22','#CC2266','#22CCCC','#8844CC','#CC9933','#55CC44','#4466BB','#66AA33','#AA4455','#5544AA','#BB8833','#AA3377','#33AAAA','#7733BB','#AA8844','#44AA55'];
 const FLOOR_COLORS=['#DDEEFF','#CCFFCC','#FFE8CC','#E8CCFF','#FFEECC','#FFCCE8','#CCFFE8','#E8CCFF','#FFF0CC','#CCFFCC','#CCE0FF','#EEFFCC','#FFCCCC','#CCE0FF','#F5FFCC','#FFCCE0','#CCFFE0','#F0CCFF','#FFE0CC','#CCFFD0','#DDEEFF','#CCFFCC','#FFE8CC','#E8CCFF','#FFEECC','#FFCCE8','#CCFFE8','#E8CCFF','#FFF0CC','#CCFFCC'];
-const LEVEL_THEMES=['🌸','🌲','🏰','🚀','🌈','🦋','🐬','🌙','🍀','🎠','🎪','🌺','🎡','🎵','🌊','🦄','🍄','⭐','🎃','🏆','🌼','🐉','🎪','🌏','🎯','🏄','🦁','🌋','🎭','👑'];
+const LEVEL_THEMES=['🌸','🌲','🏰','🚀','🌈','🦋','🐬','🌙','🍀','🎠','🎪','🌺','🎡','🎵','🌊','🦄','🍄','⭐','🎃','🏆','🌼','🐉','🏖️','🌏','🎯','🏄','🦁','🌋','🎭','👑'];
+
+// Collectibles: max 3, sometimes 2. Last one gets in-maze puzzle from level 6.
 const LEVEL_COLLECTIBLES=[
-  ['⭐',3],['🥕',3],['🍪',4],['🔑',3],['🌸',4],['⭐',4],['🥕',3],['🍪',3],['🔑',4],['🌟',3],
-  ['⭐',3],['🥕',4],['🍪',3],['🔑',3],['🌸',4],['⭐',4],['🥕',3],['🍪',4],['🔑',3],['🌟',4],
-  ['⭐',3],['🥕',4],['🍪',3],['🔑',4],['🌸',3],['⭐',4],['🥕',3],['🍪',4],['🔑',3],['🌟',4],
+  ['⭐',2],['🥕',2],['🍪',2],['🔑',2],['🌸',2], // L1-5: just 2, easy
+  ['⭐',3],['🥕',3],['🍪',3],['🔑',3],['🌟',3],  // L6-10: 3
+  ['⭐',3],['🥕',3],['🍪',3],['🔑',3],['🌸',3],  // L11-15
+  ['⭐',3],['🥕',3],['🍪',3],['🔑',3],['🌟',3],  // L16-20
+  ['⭐',3],['🥕',2],['🍪',3],['🔑',3],['🌸',2],  // L21-25
+  ['⭐',3],['🥕',3],['🍪',3],['🔑',3],['🌟',3],  // L26-30
 ];
 
-// ===== IN-MAZE PUZZLES =====
+// ===== RICH IN-MAZE PUZZLE BANK =====
+// 15 different puzzle varieties, randomly chosen per level+attempt
 function getInMazePuzzle(lvl){
-  const types=['number','shapes','fruit','color','clothes'];
-  const type=types[lvl%types.length];
-  if(type==='number'){
-    const n=2+Math.floor(Math.random()*5);const correct=n+2;
-    const w1=correct-1,w2=correct+1;
+  // Build pool of available puzzle types - more variety as levels increase
+  const pool=[];
+  // Always available
+  pool.push('number_seq','fruit_odd','color_seq','clothes_odd','bigger');
+  if(lvl>=8) pool.push('animal_sound','simple_add','shape_pattern');
+  if(lvl>=15) pool.push('number_add','color3_odd','size_order');
+  // Pick one randomly
+  const type=pool[Math.floor(Math.random()*pool.length)];
+  return buildIMP(type,lvl);
+}
+
+function buildIMP(type,lvl){
+  if(type==='number_seq'){
+    // "1 2 3 ? 5" — pick a different gap each time
+    const start=1+Math.floor(Math.random()*5);
+    const gapPos=1+Math.floor(Math.random()*3); // which of positions 0-4 is missing
+    const seq=[start,start+1,start+2,start+3,start+4];
+    const correct=seq[gapPos];
+    const display=seq.map((v,i)=>i===gapPos?'?':String(v)).join(' → ');
+    const w1=correct-1<1?correct+2:correct-1;
+    const w2=correct+1>9?correct-2:correct+1;
     const opts=[String(correct),String(w1),String(w2)];shuffle(opts);
-    return{question:t('whatMissing'),sequence:`${n} → ${n+1} → ? → ${n+3}`,options:opts,correct:String(correct)};
+    return{q:t('whatMissing'),seq:display,opts,correct:String(correct)};
   }
-  if(type==='shapes'){
-    const seqs=[['🔴','🔵','🔴','🔵','?'],['🟡','🟢','🟡','🟢','?'],['⬛','⬜','⬛','⬜','?']];
-    const s=seqs[lvl%seqs.length];
-    const correct=lvl%3===0?'🔴':lvl%3===1?'🟡':'⬛';
-    const wrong1=correct==='🔴'?'🟢':correct==='🟡'?'🔵':'🟣';
-    const wrong2=correct==='⬛'?'🔺':'🔶';
-    const opts=[correct,wrong1,wrong2];shuffle(opts);
-    return{question:t('whatShape'),sequence:s.slice(0,4).join(' ')+' ?',options:opts,correct};
+  if(type==='fruit_odd'){
+    const sets=[
+      {main:'🍎🍎🍎',odd:'🍌',opts:['🍌','🍎','🍊']},
+      {main:'🍊🍊🍊',odd:'🍇',opts:['🍊','🍇','🍓']},
+      {main:'🍓🍓🍓',odd:'🥝',opts:['🥝','🍓','🍑']},
+      {main:'🍇🍇🍇',odd:'🍑',opts:['🍇','🍑','🫐']},
+      {main:'🍌🍌🍌',odd:'🍒',opts:['🍌','🍒','🥭']},
+      {main:'🥝🥝🥝',odd:'🍈',opts:['🍈','🥝','🍋']},
+    ];
+    const s=sets[Math.floor(Math.random()*sets.length)];
+    const items=(s.main+s.odd).split('');shuffle(items);
+    const opts=[...s.opts];shuffle(opts);
+    return{q:t('whatFruit'),seq:items.join(' '),opts,correct:s.odd};
   }
-  if(type==='fruit'){
-    const sets=[{main:'🍎',odd:'🍌'},{main:'🍊',odd:'🍇'},{main:'🍓',odd:'🥝'},{main:'🍇',odd:'🍑'}];
-    const s=sets[lvl%sets.length];
-    const items=[s.main,s.main,s.main,s.odd];shuffle(items);
-    const wrong2=s.odd==='🍌'?'🍒':'🍋';
-    const opts=[s.odd,s.main,wrong2];shuffle(opts);
-    return{question:t('whatFruit'),sequence:items.join(' '),options:opts,correct:s.odd};
+  if(type==='color_seq'){
+    const seqs=[
+      {seq:'🔴 🔵 🔴 🔵 ?',ans:'🔴',opts:['🔴','🟢','🟡']},
+      {seq:'🟡 🟢 🟡 🟢 ?',ans:'🟡',opts:['🟡','🔵','🟠']},
+      {seq:'🟣 🟠 🟣 🟠 ?',ans:'🟣',opts:['🟣','🔴','🟡']},
+      {seq:'🔴 🔴 🔵 🔴 🔴 ?',ans:'🔵',opts:['🔵','🔴','🟡']},
+      {seq:'🟢 🟡 🟢 🟡 🟢 ?',ans:'🟡',opts:['🟡','🔵','🟠']},
+    ];
+    const s=seqs[Math.floor(Math.random()*seqs.length)];
+    const opts=[...s.opts];shuffle(opts);
+    return{q:t('whatColor'),seq:s.seq,opts,correct:s.ans};
   }
-  if(type==='color'){
-    const seqs=[{s:['🔴','🟡','🔴','🟡','?'],ans:'🔴',w1:'🟢',w2:'🔵'},{s:['🔵','🟢','🔵','🟢','?'],ans:'🔵',w1:'🟡',w2:'🟣'},{s:['🟣','🟠','🟣','🟠','?'],ans:'🟣',w1:'🔴',w2:'🟡'}];
-    const sq=seqs[lvl%seqs.length];
-    const opts=[sq.ans,sq.w1,sq.w2];shuffle(opts);
-    return{question:t('whatColor'),sequence:sq.s.join(' '),options:opts,correct:sq.ans};
+  if(type==='clothes_odd'){
+    const sets=[
+      {seq:'👗 👗 👗 👟',odd:'👟',opts:['👟','👗','🧣']},
+      {seq:'👠 👠 👟 👠',odd:'👟',opts:['👟','👠','🧢']},
+      {seq:'🧢 🎩 🧢 🧢',odd:'🎩',opts:['🎩','🧢','👒']},
+      {seq:'🧤 🧤 🧤 🧦',odd:'🧦',opts:['🧦','🧤','🧣']},
+      {seq:'👒 👒 🧢 👒',odd:'🧢',opts:['🧢','👒','🎩']},
+    ];
+    const s=sets[Math.floor(Math.random()*sets.length)];
+    const opts=[...s.opts];shuffle(opts);
+    return{q:t('whatClothes'),seq:s.seq,opts,correct:s.odd};
   }
-  // clothes
-  const sets2=[{main:'👗',odd:'👟'},{main:'👠',odd:'🧢'},{main:'🧢',odd:'👗'},{main:'👟',odd:'👒'}];
-  const s=sets2[lvl%sets2.length];
-  const items=[s.main,s.main,s.main,s.odd];shuffle(items);
-  const opts=[s.odd,s.main,'🧣'];shuffle(opts);
-  return{question:t('whatClothes'),sequence:items.join(' '),options:opts,correct:s.odd};
+  if(type==='bigger'){
+    const pairs=[
+      {a:'🐘',b:'🐭',bigger:'🐘',opts:['🐘','🐭','🐇']},
+      {a:'🦁',b:'🐤',bigger:'🦁',opts:['🦁','🐤','🐛']},
+      {a:'🚌',b:'🚲',bigger:'🚌',opts:['🚌','🚲','⛵']},
+      {a:'🌳',b:'🌱',bigger:'🌳',opts:['🌳','🌱','🌵']},
+      {a:'🐋',b:'🐠',bigger:'🐋',opts:['🐋','🐠','🦋']},
+    ];
+    const p=pairs[Math.floor(Math.random()*pairs.length)];
+    const opts=[...p.opts];shuffle(opts);
+    return{q:t('bigger'),seq:`${p.a}   ${p.b}`,opts,correct:p.bigger};
+  }
+  if(type==='animal_sound'){
+    const animals=[
+      {animal:'🐄',sound:lang==='ru'?'Муу':'Moo',wrong:['Гав','Мяу']},
+      {animal:'🐶',sound:lang==='ru'?'Гав':'Woof',wrong:['Мур','Мяу']},
+      {animal:'🐱',sound:lang==='ru'?'Мяу':'Meow',wrong:['Гав','Ква']},
+      {animal:'🐸',sound:lang==='ru'?'Ква':'Ribbit',wrong:['Гав','Пи']},
+      {animal:'🐑',sound:lang==='ru'?'Бее':'Baa',wrong:['Гав','Мяу']},
+    ];
+    const a=animals[Math.floor(Math.random()*animals.length)];
+    const opts=[a.sound,...a.wrong];shuffle(opts);
+    return{q:t('whatSound'),seq:a.animal,opts,correct:a.sound};
+  }
+  if(type==='simple_add'){
+    const n1=1+Math.floor(Math.random()*4);
+    const n2=1+Math.floor(Math.random()*3);
+    const ans=n1+n2;
+    const w1=ans-1<1?ans+2:ans-1;
+    const w2=ans+1;
+    const opts=[String(ans),String(w1),String(w2)];shuffle(opts);
+    return{q:`${t('simpleAdd')} ${n1} ${t('plus')} ${n2}?`,seq:`${'🌟'.repeat(n1)}  +  ${'⭐'.repeat(n2)}`,opts,correct:String(ans)};
+  }
+  if(type==='shape_pattern'){
+    const patterns=[
+      {seq:'🔵 🔴 🔵 🔴 ?',ans:'🔵',opts:['🔵','🔴','🟡']},
+      {seq:'⭐ ⭐ 🌟 ⭐ ⭐ ?',ans:'🌟',opts:['🌟','⭐','💫']},
+      {seq:'🟦 🟥 🟦 🟥 ?',ans:'🟦',opts:['🟦','🟥','🟨']},
+      {seq:'🐱 🐶 🐱 🐶 ?',ans:'🐱',opts:['🐱','🐶','🐭']},
+      {seq:'🍎 🍎 🍊 🍎 🍎 ?',ans:'🍊',opts:['🍊','🍎','🍋']},
+    ];
+    const p=patterns[Math.floor(Math.random()*patterns.length)];
+    const opts=[...p.opts];shuffle(opts);
+    return{q:t('whatShape'),seq:p.seq,opts,correct:p.ans};
+  }
+  if(type==='number_add'){
+    const n1=2+Math.floor(Math.random()*4);
+    const n2=2+Math.floor(Math.random()*4);
+    const ans=n1+n2;
+    const w1=ans-2;const w2=ans+2;
+    const opts=[String(ans),String(w1),String(w2)];shuffle(opts);
+    return{q:`${t('simpleAdd')} ${n1} ${t('plus')} ${n2}?`,seq:`${n1} + ${n2} = ?`,opts,correct:String(ans)};
+  }
+  if(type==='color3_odd'){
+    const sets=[
+      {seq:'🔴 🔴 🔴 🔵',odd:'🔵',opts:['🔵','🔴','🟡']},
+      {seq:'🟢 🟡 🟢 🟢',odd:'🟡',opts:['🟡','🟢','🔵']},
+      {seq:'🟣 🟣 🟠 🟣',odd:'🟠',opts:['🟠','🟣','🔴']},
+      {seq:'🔵 🔵 🔵 🟢',odd:'🟢',opts:['🟢','🔵','🟡']},
+    ];
+    const s=sets[Math.floor(Math.random()*sets.length)];
+    const opts=[...s.opts];shuffle(opts);
+    return{q:t('different'),seq:s.seq,opts,correct:s.odd};
+  }
+  if(type==='size_order'){
+    const sets=[
+      {seq:'🐤 🐔 ?',ans:'🦅',clue:lang==='ru'?'(растёт)':'(grows)',opts:['🦅','🐤','🥚']},
+      {seq:'🌱 🌿 ?',ans:'🌳',clue:lang==='ru'?'(растёт)':'(grows)',opts:['🌳','🌱','🍃']},
+      {seq:'🍼 🧒 ?',ans:'👨',clue:lang==='ru'?'(растёт)':'(grows)',opts:['👨','🍼','👶']},
+    ];
+    const s=sets[Math.floor(Math.random()*sets.length)];
+    const opts=[...s.opts];shuffle(opts);
+    return{q:t('whatShape'),seq:`${s.seq} ${s.clue||''}`,opts,correct:s.ans};
+  }
+  // fallback = fruit_odd
+  return buildIMP('fruit_odd',lvl);
+}
+
+// ===== RICH EXIT PUZZLE BANK =====
+// 15 different puzzle varieties
+const EXIT_PUZZLES=[
+  'color_tap','drag_key','count_fruit','emoji_order','odd_one_out',
+  'number_pick','color_circles','emoji_order2','animal_match','bigger_pick',
+  'count_shapes','memory_tap','add_simple','complete_seq','shadow_match'
+];
+function getExitPuzzleType(lvl){
+  return EXIT_PUZZLES[lvl%EXIT_PUZZLES.length];
 }
 
 // ===== GAME STATE =====
-let maze,player,exitCell,puzzleSolved,starPositions,collectibles;
+let maze,player,exitCell,puzzleSolved,collectibles;
 let canvas,ctx,cellSize,canvasW,canvasH;
 let touchStartX,touchStartY,moveTimer=null;
 let inMazePuzzleActive=false,pendingCollectibleIdx=-1;
@@ -326,11 +811,12 @@ function startLevel(lvl){
 function setupCanvas(lvl){
   canvas=document.getElementById('gameCanvas');ctx=canvas.getContext('2d');
   const hh=document.getElementById('gameHeader').offsetHeight||54;
+  const cb=document.getElementById('collectBar').offsetHeight||30;
   const ah=document.getElementById('arrowControls').offsetHeight||148;
-  const W=window.innerWidth,H=window.innerHeight-hh-ah-12;
+  const W=window.innerWidth,H=window.innerHeight-hh-cb-ah-10;
   const grid=MAZES[lvl],rows=grid.length,cols=grid[0].length;
-  const cs=Math.floor(Math.min((W-14)/cols,(H-10)/rows));
-  cellSize=Math.max(cs,33);canvasW=cols*cellSize;canvasH=rows*cellSize;
+  const cs=Math.floor(Math.min((W-12)/cols,(H-8)/rows));
+  cellSize=Math.max(cs,30);canvasW=cols*cellSize;canvasH=rows*cellSize;
   canvas.width=canvasW;canvas.height=canvasH;canvas.style.width=canvasW+'px';canvas.style.height=canvasH+'px';
 }
 function initGame(lvl){
@@ -341,13 +827,25 @@ function initGame(lvl){
   for(let r=0;r<maze.length;r++)for(let c=0;c<maze[r].length;c++)
     if(maze[r][c]===0&&!(r===sr&&c===sc)&&!(r===ENDS[lvl][0]&&c===ENDS[lvl][1]))paths.push({r,c});
   shuffle(paths);
-  const [cEmoji,cCount]=LEVEL_COLLECTIBLES[lvl],realCount=Math.min(cCount,paths.length);
-  collectibles=paths.slice(0,realCount).map((p,i)=>({row:p.r,col:p.c,collected:false,emoji:cEmoji,needsPuzzle:lvl>=5&&i===realCount-1}));
-  starPositions=collectibles;
+  const [cEmoji,cCount]=LEVEL_COLLECTIBLES[lvl];
+  const realCount=Math.min(cCount,paths.length);
+  collectibles=paths.slice(0,realCount).map((p,i)=>({
+    row:p.r,col:p.c,collected:false,emoji:cEmoji,
+    needsPuzzle:lvl>=5&&i===realCount-1
+  }));
+  updateCollectBar();
   canvas.ontouchstart=(e)=>{e.preventDefault();touchStartX=e.touches[0].clientX;touchStartY=e.touches[0].clientY;};
   canvas.ontouchend=(e)=>{e.preventDefault();const dx=e.changedTouches[0].clientX-touchStartX,dy=e.changedTouches[0].clientY-touchStartY;if(Math.abs(dx)<12&&Math.abs(dy)<12)return;if(Math.abs(dx)>Math.abs(dy))tryMove(dx>0?'right':'left');else tryMove(dy>0?'down':'up');};
 }
 function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}}
+
+function updateCollectBar(){
+  const got=collectibles.filter(s=>s.collected).length;
+  const total=collectibles.length;
+  const emoji=collectibles.length>0?collectibles[0].emoji:'⭐';
+  document.getElementById('collectIcon').textContent=emoji;
+  document.getElementById('collectCount').textContent=`${got}/${total}`;
+}
 
 function tryMove(dir){
   if(document.getElementById('puzzleOverlay').classList.contains('active'))return;
@@ -360,12 +858,33 @@ function tryMove(dir){
   collectibles.forEach((s,idx)=>{
     if(!s.collected&&s.row===nr&&s.col===nc){
       if(s.needsPuzzle){pendingCollectibleIdx=idx;showInMazePuzzle(idx);}
-      else{s.collected=true;playCollect();}
+      else{s.collected=true;playCollect();updateCollectBar();}
     }
   });
-  if(nr===exitCell.row&&nc===exitCell.col){if(puzzleSolved)doLevelComplete();else showPuzzle();}
+  // Exit: require ALL collectibles collected
+  if(nr===exitCell.row&&nc===exitCell.col){
+    const allGot=collectibles.every(s=>s.collected);
+    if(!allGot){
+      const got=collectibles.filter(s=>s.collected).length;
+      flashNotCollected(got,collectibles.length);
+    } else if(puzzleSolved){
+      doLevelComplete();
+    } else {
+      showPuzzle();
+    }
+  }
 }
 
+function flashNotCollected(got,total){
+  playAlert();
+  const bar=document.getElementById('collectBar');
+  bar.style.background='rgba(255,80,80,0.9)';
+  bar.style.color='white';
+  document.getElementById('collectCount').textContent=`${got}/${total} — ${t('notAllCollected')}`;
+  setTimeout(()=>{bar.style.background='rgba(255,255,255,0.9)';bar.style.color='#00796B';updateCollectBar();},1400);
+}
+
+// ===== IN-MAZE PUZZLES =====
 function showInMazePuzzle(idx){
   inMazePuzzleActive=true;
   const puzzle=getInMazePuzzle(currentLevel);
@@ -373,24 +892,26 @@ function showInMazePuzzle(idx){
   overlay.classList.add('active');
   box.innerHTML=`
     <div class="imp-title">${t('impSolve')}</div>
-    <div style="font-size:20px;color:#333;margin:6px 0;font-family:'Fredoka One',cursive;">${puzzle.question}</div>
-    <div style="font-size:26px;color:#00796B;margin:5px 0;font-family:'Nunito',sans-serif;font-weight:900;letter-spacing:2px;">${puzzle.sequence}</div>
-    <div class="imp-options">${puzzle.options.map((opt,i)=>`<div class="imp-opt" id="impOpt${i}" onclick="checkIMP('${opt.replace(/'/g,"\\'")}','${puzzle.correct.replace(/'/g,"\\'")}',${i})">${opt}</div>`).join('')}</div>
-    <div id="impMsg" style="font-size:22px;min-height:32px;margin-top:6px;font-family:'Fredoka One',cursive;"></div>`;
+    <div style="font-size:19px;color:#333;margin:5px 0;font-family:'Nunito',sans-serif;font-weight:700;">${puzzle.q}</div>
+    <div style="font-size:28px;color:#00796B;margin:6px 0;font-family:'Nunito',sans-serif;font-weight:900;letter-spacing:3px;">${puzzle.seq}</div>
+    <div class="imp-options">${puzzle.opts.map((opt,i)=>`<div class="imp-opt" id="impOpt${i}" onclick="checkIMP(${i},'${encodeURIComponent(opt)}','${encodeURIComponent(puzzle.correct)}')">${opt}</div>`).join('')}</div>
+    <div id="impMsg" style="font-size:21px;min-height:30px;margin-top:6px;font-family:'Nunito',sans-serif;font-weight:700;"></div>`;
 }
-function checkIMP(chosen,correct,idx){
+function checkIMP(idx,chosenEnc,correctEnc){
+  const chosen=decodeURIComponent(chosenEnc),correct=decodeURIComponent(correctEnc);
   const el=document.getElementById('impOpt'+idx);
   if(chosen===correct){
     el.classList.add('correct');document.getElementById('impMsg').textContent=t('impRight');playCollect();
-    setTimeout(()=>{document.getElementById('inMazePuzzleOverlay').classList.remove('active');inMazePuzzleActive=false;if(pendingCollectibleIdx>=0){collectibles[pendingCollectibleIdx].collected=true;pendingCollectibleIdx=-1;}},700);
+    setTimeout(()=>{
+      document.getElementById('inMazePuzzleOverlay').classList.remove('active');
+      inMazePuzzleActive=false;
+      if(pendingCollectibleIdx>=0){collectibles[pendingCollectibleIdx].collected=true;updateCollectBar();pendingCollectibleIdx=-1;}
+    },700);
   } else {
     el.classList.add('wrong');document.getElementById('impMsg').textContent=t('impWrong');
     setTimeout(()=>el.classList.remove('wrong'),500);
   }
 }
-
-const ALL_PUZZLE_TYPES=['stars','color','drag','count','sequence','color2','fruit_count','number_pick','color3','shape_order'];
-function getPuzzleType(lvl){return ALL_PUZZLE_TYPES[lvl%ALL_PUZZLE_TYPES.length];}
 
 function doLevelComplete(){stopArrows();playDoor();completedLevels[currentLevel]=true;setTimeout(()=>{if(currentLevel>=29)showFinal();else showVictory();},500);}
 
@@ -421,34 +942,51 @@ function draw(){
   ctx.clearRect(0,0,canvasW,canvasH);ctx.fillStyle=LEVEL_BG[lvl];ctx.fillRect(0,0,canvasW,canvasH);
   for(let r=0;r<rows;r++)for(let c=0;c<cols;c++){
     const x=c*cs,y=r*cs;
-    if(maze[r][c]===1){ctx.fillStyle=WALL_COLORS[lvl];drawRR(x+1,y+1,cs-2,cs-2,7);ctx.fill();ctx.fillStyle='rgba(255,255,255,0.24)';drawRR(x+3,y+3,cs-6,cs/3,4);ctx.fill();ctx.fillStyle='rgba(0,0,0,0.11)';drawRR(x+1,y+cs*0.65,cs-2,cs*0.32,4);ctx.fill();}
-    else{ctx.fillStyle=FLOOR_COLORS[lvl];ctx.fillRect(x,y,cs,cs);ctx.fillStyle='rgba(0,0,0,0.03)';ctx.beginPath();ctx.arc(x+cs/2,y+cs/2,2,0,Math.PI*2);ctx.fill();}
+    if(maze[r][c]===1){
+      ctx.fillStyle=WALL_COLORS[lvl];drawRR(x+1,y+1,cs-2,cs-2,7);ctx.fill();
+      ctx.fillStyle='rgba(255,255,255,0.24)';drawRR(x+3,y+3,cs-6,cs/3,4);ctx.fill();
+      ctx.fillStyle='rgba(0,0,0,0.11)';drawRR(x+1,y+cs*0.65,cs-2,cs*0.32,4);ctx.fill();
+    } else {
+      ctx.fillStyle=FLOOR_COLORS[lvl];ctx.fillRect(x,y,cs,cs);
+    }
   }
   ctx.textAlign='center';ctx.textBaseline='middle';
   collectibles.forEach(s=>{
     if(!s.collected){
       const cx=s.col*cs+cs/2,cy=s.row*cs+cs/2;
-      ctx.fillStyle=s.needsPuzzle?'rgba(255,210,80,0.92)':'rgba(255,255,165,0.9)';
-      ctx.beginPath();ctx.arc(cx,cy,cs*0.39,0,Math.PI*2);ctx.fill();
-      ctx.strokeStyle=s.needsPuzzle?'rgba(255,130,0,0.9)':'rgba(255,195,0,0.9)';ctx.lineWidth=s.needsPuzzle?4:3;
-      ctx.beginPath();ctx.arc(cx,cy,cs*0.39,0,Math.PI*2);ctx.stroke();
-      if(s.needsPuzzle){ctx.font=(cs*0.2)+'px serif';ctx.fillStyle='#CC4400';ctx.fillText('🧩',cx+cs*0.22,cy-cs*0.22);}
-      ctx.shadowColor='rgba(255,195,0,0.85)';ctx.shadowBlur=10;
-      ctx.font=(cs*0.5)+'px serif';ctx.fillText(s.emoji,cx,cy);ctx.shadowBlur=0;
+      ctx.fillStyle=s.needsPuzzle?'rgba(255,200,60,0.95)':'rgba(255,255,150,0.92)';
+      ctx.beginPath();ctx.arc(cx,cy,cs*0.4,0,Math.PI*2);ctx.fill();
+      ctx.strokeStyle=s.needsPuzzle?'rgba(255,120,0,0.95)':'rgba(255,190,0,0.9)';
+      ctx.lineWidth=s.needsPuzzle?4:3;
+      ctx.beginPath();ctx.arc(cx,cy,cs*0.4,0,Math.PI*2);ctx.stroke();
+      if(s.needsPuzzle){
+        ctx.font=(cs*0.19)+'px serif';ctx.fillStyle='#CC3300';
+        ctx.fillText('🧩',cx+cs*0.23,cy-cs*0.23);
+      }
+      ctx.shadowColor='rgba(255,190,0,0.9)';ctx.shadowBlur=10;
+      ctx.font=(cs*0.52)+'px serif';ctx.fillText(s.emoji,cx,cy);ctx.shadowBlur=0;
     }
   });
-  drawExit(exitCell.col*cs,exitCell.row*cs,cs,puzzleSolved);
+  drawExit(exitCell.col*cs,exitCell.row*cs,cs,puzzleSolved,collectibles.every(s=>s.collected));
   drawPlayer(player.col*cs+cs/2,player.row*cs+cs/2,cs);
 }
-function drawExit(x,y,cs,open){
+function drawExit(x,y,cs,open,allCollected){
   ctx.fillStyle=FLOOR_COLORS[currentLevel];ctx.fillRect(x,y,cs,cs);
-  ctx.fillStyle=open?'#33DD33':'#BB7722';drawRR(x+cs*0.15,y+cs*0.05,cs*0.7,cs*0.9,7);ctx.fill();
-  ctx.fillStyle=open?'#BBFFBB':'#FFD080';drawRR(x+cs*0.22,y+cs*0.1,cs*0.56,cs*0.8,5);ctx.fill();
+  const doorColor=open?'#33DD33':allCollected?'#DD9900':'#885522';
+  ctx.fillStyle=doorColor;drawRR(x+cs*0.15,y+cs*0.05,cs*0.7,cs*0.9,7);ctx.fill();
+  ctx.fillStyle=open?'#BBFFBB':allCollected?'#FFE080':'#FFD080';
+  drawRR(x+cs*0.22,y+cs*0.1,cs*0.56,cs*0.8,5);ctx.fill();
   ctx.fillStyle='#FFD700';ctx.beginPath();ctx.arc(x+cs*0.72,y+cs*0.52,cs*0.07,0,Math.PI*2);ctx.fill();
-  ctx.font=(cs*0.36)+'px serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(open?'🚪':'🔒',x+cs/2,y+cs/2);
+  ctx.font=(cs*0.36)+'px serif';ctx.textAlign='center';ctx.textBaseline='middle';
+  ctx.fillText(open?'🚪':allCollected?'🔓':'🔒',x+cs/2,y+cs/2);
 }
-function drawPlayer(px,py,cs){ctx.textAlign='center';ctx.textBaseline='middle';ctx.shadowColor='white';ctx.shadowBlur=14;ctx.font=(cs*0.78)+'px serif';ctx.fillText(CHARS[selectedChar],px,py);ctx.shadowBlur=0;}
-function drawRR(x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.lineTo(x+w-r,y);ctx.quadraticCurveTo(x+w,y,x+w,y+r);ctx.lineTo(x+w,y+h-r);ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);ctx.lineTo(x+r,y+h);ctx.quadraticCurveTo(x,y+h,x,y+h-r);ctx.lineTo(x,y+r);ctx.quadraticCurveTo(x,y,x+r,y);ctx.closePath();}
+function drawPlayer(px,py,cs){
+  ctx.textAlign='center';ctx.textBaseline='middle';ctx.shadowColor='white';ctx.shadowBlur=14;
+  ctx.font=(cs*0.78)+'px serif';ctx.fillText(CHARS[selectedChar],px,py);ctx.shadowBlur=0;
+}
+function drawRR(x,y,w,h,r){
+  ctx.beginPath();ctx.moveTo(x+r,y);ctx.lineTo(x+w-r,y);ctx.quadraticCurveTo(x+w,y,x+w,y+r);ctx.lineTo(x+w,y+h-r);ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);ctx.lineTo(x+r,y+h);ctx.quadraticCurveTo(x,y+h,x,y+h-r);ctx.lineTo(x,y+r);ctx.quadraticCurveTo(x,y,x+r,y);ctx.closePath();
+}
 
 function setupArrows(){
   const dirs={btnUp:'up',btnDown:'down',btnLeft:'left',btnRight:'right'};
@@ -465,82 +1003,165 @@ const keyHeld={};
 document.addEventListener('keydown',(e)=>{const map={ArrowUp:'up',ArrowDown:'down',ArrowLeft:'left',ArrowRight:'right',w:'up',s:'down',a:'left',d:'right'};if(map[e.key]){e.preventDefault();if(!keyHeld[e.key]){keyHeld[e.key]=true;tryMove(map[e.key]);}}});
 document.addEventListener('keyup',(e)=>{keyHeld[e.key]=false;});
 
-let appleSelectedCount=0;
+// ===== EXIT PUZZLES =====
+let _pickCount=0;
 function showPuzzle(){
-  const type=getPuzzleType(currentLevel);
+  const type=getExitPuzzleType(currentLevel);
   const overlay=document.getElementById('puzzleOverlay'),box=document.getElementById('puzzleBox');
-  appleSelectedCount=0;window._miniPuzzleCount=0;overlay.classList.add('active');
-  if(type==='stars'){
-    const needed=collectibles.length,col=collectibles.filter(s=>s.collected).length,emoji=collectibles.length>0?collectibles[0].emoji:'⭐';
-    if(col>=needed){closePuzzle(true);return;}
-    box.innerHTML=`<div class="puzzle-title">${emoji} ${t('findThem')}</div><div style="font-size:40px;margin:8px 0;">${emoji.repeat(col)}${'○'.repeat(needed-col)}</div><div style="font-size:18px;color:#666;">${t('collected')} ${col} ${t('of')} ${needed}</div><div style="margin-top:14px;"><button class="btn btn-green" style="font-size:19px;padding:10px 20px;" onclick="closePuzzle(false)">${t('goFind')}</button></div>`;
-  } else if(type==='color'){
-    const sets=[[{c:'#FF3344',n:lang==='ru'?'Красный':'Red',e:'🔴'},{c:'#44AAFF',n:lang==='ru'?'Синий':'Blue',e:'🔵'},{c:'#FFDD00',n:lang==='ru'?'Жёлтый':'Yellow',e:'🟡'}],[{c:'#44CC44',n:lang==='ru'?'Зелёный':'Green',e:'🟢'},{c:'#FF8800',n:lang==='ru'?'Оранжевый':'Orange',e:'🟠'},{c:'#CC44CC',n:lang==='ru'?'Фиолетовый':'Purple',e:'🟣'}]];
-    const cs2=sets[currentLevel%sets.length],correct=Math.floor(Math.random()*3);
-    box.innerHTML=`<div class="puzzle-title">${t('tapColor')}${cs2[correct].n}!</div><div class="color-circles">${cs2.map((c,i)=>`<div class="color-circle" style="background:${c.c};" onclick="checkColor(${i},${correct})">${c.e}</div>`).join('')}</div><div id="colorMsg" style="font-size:22px;margin-top:8px;min-height:32px;"></div>`;
-  } else if(type==='drag'){
-    box.innerHTML=`<div class="puzzle-title">${t('dragKey')}</div><div class="drag-area" id="dragArea"><div id="dragKey" style="font-size:60px;position:absolute;left:15px;top:50px;cursor:grab;user-select:none;z-index:10;touch-action:none;">🔑</div><div id="lockTarget" style="font-size:60px;position:absolute;right:15px;top:50px;user-select:none;">🔒</div></div><div id="dragMsg" style="font-size:21px;margin-top:8px;min-height:30px;"></div>`;
+  _pickCount=0;window._miniPuzzleCount=0;overlay.classList.add('active');
+
+  if(type==='color_tap'){
+    const colorSets=[
+      [{c:'#FF3344',n:lang==='ru'?'Красный':'Red',e:'🔴'},{c:'#44AAFF',n:lang==='ru'?'Синий':'Blue',e:'🔵'},{c:'#FFDD00',n:lang==='ru'?'Жёлтый':'Yellow',e:'🟡'}],
+      [{c:'#44CC44',n:lang==='ru'?'Зелёный':'Green',e:'🟢'},{c:'#FF8800',n:lang==='ru'?'Оранжевый':'Orange',e:'🟠'},{c:'#CC44CC',n:lang==='ru'?'Фиолетовый':'Purple',e:'🟣'}],
+      [{c:'#FF3344',n:lang==='ru'?'Красный':'Red',e:'🔴'},{c:'#44CC44',n:lang==='ru'?'Зелёный':'Green',e:'🟢'},{c:'#FF8800',n:lang==='ru'?'Оранжевый':'Orange',e:'🟠'}],
+    ];
+    const cs2=colorSets[currentLevel%colorSets.length],correct=Math.floor(Math.random()*3);
+    box.innerHTML=`<div class="puzzle-title">${t('tapColor')}${cs2[correct].n}!</div><div class="color-circles">${cs2.map((c,i)=>`<div class="color-circle" style="background:${c.c};" onclick="ep_checkColor(${i},${correct})">${c.e}</div>`).join('')}</div><div class="puz-msg" id="puzMsg"></div>`;
+  }
+  else if(type==='drag_key'){
+    box.innerHTML=`<div class="puzzle-title">${t('dragKey')}</div><div class="drag-area" id="dragArea"><div id="dragKey" style="font-size:60px;position:absolute;left:15px;top:48px;cursor:grab;user-select:none;z-index:10;touch-action:none;">🔑</div><div id="lockTarget" style="font-size:60px;position:absolute;right:15px;top:48px;user-select:none;">🔒</div></div><div class="puz-msg" id="puzMsg"></div>`;
     setupDrag();
-  } else if(type==='count'){
-    const fsets=[{t:'🍎',d:'🍊',n:2},{t:'🍌',d:'🍋',n:3},{t:'🍓',d:'🫐',n:2},{t:'🍇',d:'🍒',n:3},{t:'🥝',d:'🥑',n:2}];
+  }
+  else if(type==='count_fruit'){
+    const fsets=[{t:'🍎',d:'🍊',n:2},{t:'🍌',d:'🍋',n:3},{t:'🍓',d:'🫐',n:2},{t:'🍇',d:'🍒',n:3},{t:'🥝',d:'🥑',n:2},{t:'🍑',d:'🍈',n:3}];
     const fs=fsets[currentLevel%fsets.length];const items=[];
     for(let i=0;i<fs.n;i++)items.push({e:fs.t,ok:true});for(let i=0;i<6-fs.n;i++)items.push({e:fs.d,ok:false});shuffle(items);
-    box.innerHTML=`<div class="puzzle-title">${fs.t} ${t('tapAll')}${fs.t}!</div><div style="font-size:17px;color:#888;">${t('there')}${fs.n}!</div><div class="apple-row">${items.map((it,i)=>`<div class="apple-item" id="ap${i}" onclick="clickApple(${i},${it.ok},${fs.n})">${it.e}</div>`).join('')}</div><div id="countMsg" style="font-size:21px;margin-top:8px;min-height:30px;"></div>`;
-  } else if(type==='sequence'){
-    const seqs=[['🌸','🌼','🌻'],['🐶','🐱','🐭'],['🍕','🍔','🌮'],['🚀','⭐','🌙'],['🎈','🎉','🎊'],['🐸','🐢','🐍']];
+    box.innerHTML=`<div class="puzzle-title">${fs.t} ${t('tapAll')}${fs.t}!</div><div style="font-size:16px;color:#888;">${t('there')}${fs.n}</div><div class="apple-row">${items.map((it,i)=>`<div class="apple-item" id="ap${i}" onclick="ep_clickApple(${i},${it.ok},${fs.n})">${it.e}</div>`).join('')}</div><div class="puz-msg" id="puzMsg"></div>`;
+  }
+  else if(type==='emoji_order'){
+    const seqs=[['🌸','🌼','🌻'],['🐶','🐱','🐭'],['🍕','🍔','🌮'],['🚀','⭐','🌙'],['🎈','🎉','🎊'],['🐸','🐢','🐍'],['🌈','☀️','🌧️'],['🍦','🍰','🎂']];
     const seq=seqs[currentLevel%seqs.length],shuffled=[...seq].sort(()=>Math.random()-0.5);window._miniPuzzleCount=0;
-    box.innerHTML=`<div class="puzzle-title">${t('tapOrder')}</div><div style="font-size:19px;color:#888;margin-bottom:8px;">${seq[0]} → ${seq[1]} → ${seq[2]}</div><div class="mini-puzzle-grid">${shuffled.map((p,i)=>`<div class="puzzle-piece" id="pp${i}" onclick="clickPiece('pp',${i},'${p}','${seq.join(',')}')">${p}</div>`).join('')}</div><div id="puzzleMsg" style="font-size:21px;margin-top:8px;min-height:30px;"></div>`;
-  } else if(type==='color2'){
-    const groups=[{same:'🔵',odd:'🔴',items:['🔵','🔵','🔴','🔵'],oddIdx:2},{same:'🟢',odd:'🟡',items:['🟢','🟡','🟢','🟢'],oddIdx:1},{same:'🟣',odd:'🟠',items:['🟣','🟣','🟣','🟠'],oddIdx:3},{same:'🔴',odd:'🔵',items:['🔵','🔴','🔴','🔴'],oddIdx:0}];
-    const g=groups[currentLevel%groups.length];const arr=[...g.items];const idxMap=arr.map((_,i)=>i);
-    for(let i=idxMap.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]];[idxMap[i],idxMap[j]]=[idxMap[j],idxMap[i]];}
-    const newOddPos=idxMap.indexOf(g.oddIdx);
-    box.innerHTML=`<div class="puzzle-title">${t('different')}</div><div style="font-size:17px;color:#888;margin-bottom:6px;">${t('findDiff')}</div><div style="display:flex;gap:13px;justify-content:center;flex-wrap:wrap;margin:9px 0;">${arr.map((e,i)=>`<div onclick="checkOdd(${i},${newOddPos})" style="font-size:66px;cursor:pointer;border:5px solid transparent;border-radius:17px;padding:4px;transition:all 0.15s;" id="odd${i}">${e}</div>`).join('')}</div><div id="oddMsg" style="font-size:22px;margin-top:6px;min-height:30px;"></div>`;
-  } else if(type==='fruit_count'){
-    const fruit=['🍎','🍌','🍓','🍇','🍊','🥝','🍑','🍒'][currentLevel%8];
-    const rc=1+Math.floor(Math.random()*4);const w1=rc===1?2:rc-1,w2=rc===4?3:rc+1;
-    const opts=[rc,w1,w2].sort(()=>Math.random()-0.5);
-    box.innerHTML=`<div class="puzzle-title">${t('howMany')}${fruit}?</div><div style="font-size:46px;letter-spacing:4px;margin:9px 0;word-break:break-all;">${fruit.repeat(rc)}</div><div style="display:flex;gap:14px;justify-content:center;margin:8px 0;">${opts.map(n=>`<div onclick="checkNumber(${n},${rc})" id="numopt${n}" style="font-family:'Fredoka One',cursive;font-size:48px;background:#E0F2F1;border-radius:17px;width:75px;height:75px;display:flex;align-items:center;justify-content:center;cursor:pointer;border:5px solid #80CBC4;box-shadow:0 4px 10px rgba(0,0,0,0.1);transition:all 0.15s;">${n}</div>`).join('')}</div><div id="numMsg" style="font-size:22px;margin-top:6px;min-height:30px;"></div>`;
-  } else if(type==='number_pick'){
+    box.innerHTML=`<div class="puzzle-title">${t('tapOrder')}</div><div style="font-size:19px;color:#555;margin-bottom:8px;">${seq.join(' → ')}</div><div class="mini-puzzle-grid">${shuffled.map((p,i)=>`<div class="puzzle-piece" id="pp${i}" onclick="ep_clickPiece('pp',${i},'${encodeURIComponent(p)}','${seq.map(encodeURIComponent).join(',')}')">${p}</div>`).join('')}</div><div class="puz-msg" id="puzMsg"></div>`;
+  }
+  else if(type==='odd_one_out'){
+    const groups=[
+      {same:'🔵',odd:'🔴',items:['🔵','🔵','🔴','🔵']},
+      {same:'🟢',odd:'🟡',items:['🟢','🟡','🟢','🟢']},
+      {same:'🍎',odd:'🍊',items:['🍎','🍎','🍊','🍎']},
+      {same:'🐶',odd:'🐱',items:['🐶','🐱','🐶','🐶']},
+      {same:'⭐',odd:'🌟',items:['⭐','⭐','⭐','🌟']},
+      {same:'🚀',odd:'✈️',items:['🚀','🚀','✈️','🚀']},
+    ];
+    const g=groups[currentLevel%groups.length];const arr=[...g.items];shuffle(arr);
+    const oddPos=arr.indexOf(g.odd);
+    box.innerHTML=`<div class="puzzle-title">${t('different')}</div><div style="font-size:16px;color:#888;margin-bottom:6px;">${t('findDiff')}</div><div style="display:flex;gap:13px;justify-content:center;flex-wrap:wrap;margin:9px 0;">${arr.map((e,i)=>`<div onclick="ep_checkOdd(${i},${oddPos})" style="font-size:64px;cursor:pointer;border:5px solid transparent;border-radius:17px;padding:4px;transition:all 0.15s;" id="odd${i}">${e}</div>`).join('')}</div><div class="puz-msg" id="puzMsg"></div>`;
+  }
+  else if(type==='number_pick'){
     const target=1+Math.floor(Math.random()*5);const all=[1,2,3,4,5].sort(()=>Math.random()-0.5);
-    box.innerHTML=`<div class="puzzle-title">${t('tapNum')}${target}!</div><div style="font-size:84px;margin:4px 0;">${['1️⃣','2️⃣','3️⃣','4️⃣','5️⃣'][target-1]}</div><div style="display:flex;gap:11px;justify-content:center;flex-wrap:wrap;margin:8px 0;">${all.map(n=>`<div onclick="checkNumber(${n},${target})" id="numopt${n}" style="font-family:'Fredoka One',cursive;font-size:44px;background:${['#FFE0E0','#E0FFE0','#E0E0FF','#FFFFE0','#FFE0FF'][n-1]};border-radius:17px;width:70px;height:70px;display:flex;align-items:center;justify-content:center;cursor:pointer;border:5px solid #DDD;box-shadow:0 4px 10px rgba(0,0,0,0.1);transition:all 0.15s;">${n}</div>`).join('')}</div><div id="numMsg" style="font-size:22px;margin-top:6px;min-height:30px;"></div>`;
-  } else if(type==='color3'){
+    const emojis=['1️⃣','2️⃣','3️⃣','4️⃣','5️⃣'];
+    box.innerHTML=`<div class="puzzle-title">${t('tapNum')}${target}!</div><div style="font-size:80px;margin:4px 0;">${emojis[target-1]}</div><div style="display:flex;gap:11px;justify-content:center;flex-wrap:wrap;margin:8px 0;">${all.map(n=>`<div onclick="ep_checkNumber(${n},${target})" id="numopt${n}" style="font-family:'Nunito',sans-serif;font-weight:900;font-size:44px;background:${['#FFE0E0','#E0FFE0','#E0E0FF','#FFFFE0','#FFE0FF'][n-1]};border-radius:17px;width:68px;height:68px;display:flex;align-items:center;justify-content:center;cursor:pointer;border:5px solid #DDD;box-shadow:0 4px 10px rgba(0,0,0,0.1);transition:all 0.15s;">${n}</div>`).join('')}</div><div class="puz-msg" id="puzMsg"></div>`;
+  }
+  else if(type==='color_circles'){
     const cgs=[{target:lang==='ru'?'Красные':'Red',tc:'#FF3344',dc:'#44AAFF'},{target:lang==='ru'?'Синие':'Blue',tc:'#4488FF',dc:'#FF8833'},{target:lang==='ru'?'Зелёные':'Green',tc:'#33CC55',dc:'#FF3344'},{target:lang==='ru'?'Жёлтые':'Yellow',tc:'#FFDD00',dc:'#AA44CC'}];
-    const cg=cgs[currentLevel%cgs.length];const cc2=2+Math.floor(Math.random()*2);const total=6;
-    const ia=[];for(let i=0;i<cc2;i++)ia.push({c:cg.tc,ok:true});for(let i=0;i<total-cc2;i++)ia.push({c:cg.dc,ok:false});shuffle(ia);appleSelectedCount=0;
-    box.innerHTML=`<div class="puzzle-title">${t('tapAllColor')}<span style="color:${cg.tc}">${cg.target}</span>${t('circles')}</div><div style="font-size:16px;color:#888;">${lang==='ru'?'Их ровно '+cc2:'There are '+cc2}</div><div style="display:flex;flex-wrap:wrap;gap:11px;justify-content:center;margin:11px 0;">${ia.map((it,i)=>`<div id="cc${i}" onclick="clickColorCircle(${i},${it.ok},${cc2})" style="width:70px;height:70px;border-radius:50%;background:${it.c};border:5px solid white;box-shadow:0 4px 12px rgba(0,0,0,0.17);cursor:pointer;transition:all 0.15s;"></div>`).join('')}</div><div id="cc3Msg" style="font-size:22px;margin-top:6px;min-height:30px;"></div>`;
-  } else {
-    const orders=[['🔴','🟡','🔵'],['🟢','🟠','🟣'],['🔵','🔴','🟢'],['🟡','🟣','🟠']];
+    const cg=cgs[currentLevel%cgs.length];const cc2=2+Math.floor(Math.random()*2);
+    const ia=[];for(let i=0;i<cc2;i++)ia.push({c:cg.tc,ok:true});for(let i=0;i<6-cc2;i++)ia.push({c:cg.dc,ok:false});shuffle(ia);_pickCount=0;
+    box.innerHTML=`<div class="puzzle-title">${t('tapAllColor')}<span style="color:${cg.tc}">${cg.target}</span>${t('circles')}</div><div style="font-size:15px;color:#888;">${lang==='ru'?'Их ровно '+cc2:'Find '+cc2}</div><div style="display:flex;flex-wrap:wrap;gap:11px;justify-content:center;margin:11px 0;">${ia.map((it,i)=>`<div id="cc${i}" onclick="ep_clickColorCircle(${i},${it.ok},${cc2})" style="width:68px;height:68px;border-radius:50%;background:${it.c};border:5px solid white;box-shadow:0 4px 12px rgba(0,0,0,0.17);cursor:pointer;transition:all 0.15s;"></div>`).join('')}</div><div class="puz-msg" id="puzMsg"></div>`;
+  }
+  else if(type==='emoji_order2'){
+    const orders=[['🔴','🟡','🔵'],['🟢','🟠','🟣'],['🔵','🔴','🟢'],['🟡','🟣','🟠'],['🍎','🍊','🍋'],['⭐','🌟','💫']];
     const seq=orders[currentLevel%orders.length],shuffled=[...seq].sort(()=>Math.random()-0.5);window._miniPuzzleCount=0;
-    box.innerHTML=`<div class="puzzle-title">${t('tapColors')}</div><div style="font-size:22px;margin-bottom:8px;">${seq[0]} → ${seq[1]} → ${seq[2]}</div><div class="mini-puzzle-grid">${shuffled.map((p,i)=>`<div class="puzzle-piece" id="sp${i}" onclick="clickPiece('sp',${i},'${p}','${seq.join(',')}')" style="font-size:48px;">${p}</div>`).join('')}</div><div id="puzzleMsg" style="font-size:21px;margin-top:8px;min-height:30px;"></div>`;
+    box.innerHTML=`<div class="puzzle-title">${t('tapColors')}</div><div style="font-size:22px;margin-bottom:8px;">${seq.join(' → ')}</div><div class="mini-puzzle-grid">${shuffled.map((p,i)=>`<div class="puzzle-piece" id="sp${i}" onclick="ep_clickPiece('sp',${i},'${encodeURIComponent(p)}','${seq.map(encodeURIComponent).join(',')}')" style="font-size:48px;">${p}</div>`).join('')}</div><div class="puz-msg" id="puzMsg"></div>`;
+  }
+  else if(type==='animal_match'){
+    const pairs=[{animal:'🐄',sound:lang==='ru'?'Муу':'Moo',wrong:[lang==='ru'?'Гав':'Woof',lang==='ru'?'Мяу':'Meow']},{animal:'🐶',sound:lang==='ru'?'Гав':'Woof',wrong:[lang==='ru'?'Мяу':'Meow',lang==='ru'?'Муу':'Moo']},{animal:'🐱',sound:lang==='ru'?'Мяу':'Meow',wrong:[lang==='ru'?'Гав':'Woof',lang==='ru'?'Ква':'Ribbit']},{animal:'🐸',sound:lang==='ru'?'Ква':'Ribbit',wrong:[lang==='ru'?'Гав':'Woof',lang==='ru'?'Мяу':'Meow']},{animal:'🐑',sound:lang==='ru'?'Бее':'Baa',wrong:[lang==='ru'?'Мяу':'Meow',lang==='ru'?'Ква':'Ribbit']},{animal:'🐦',sound:lang==='ru'?'Чирик':'Tweet',wrong:[lang==='ru'?'Мяу':'Meow',lang==='ru'?'Гав':'Woof']}];
+    const p=pairs[currentLevel%pairs.length];
+    const opts=[p.sound,...p.wrong];shuffle(opts);
+    box.innerHTML=`<div class="puzzle-title">${t('whatSound')}</div><div style="font-size:90px;margin:8px 0;">${p.animal}</div><div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">${opts.map(o=>`<div onclick="ep_checkTextOption('${encodeURIComponent(o)}','${encodeURIComponent(p.sound)}')" style="font-family:'Nunito',sans-serif;font-weight:900;font-size:26px;background:#E0F2F1;border:4px solid #80CBC4;border-radius:18px;padding:12px 18px;cursor:pointer;box-shadow:0 4px 10px rgba(0,0,0,0.1);">${o}</div>`).join('')}</div><div class="puz-msg" id="puzMsg"></div>`;
+  }
+  else if(type==='bigger_pick'){
+    const pairs=[{a:'🐘',b:'🐭',correct:'🐘'},{a:'🦁',b:'🐤',correct:'🦁'},{a:'🚌',b:'🚲',correct:'🚌'},{a:'🌳',b:'🌱',correct:'🌳'},{a:'🐋',b:'🐠',correct:'🐋'},{a:'🏠',b:'🏚️',correct:'🏠'}];
+    const p=pairs[currentLevel%pairs.length];
+    const opts=[p.a,p.b].sort(()=>Math.random()-0.5);
+    box.innerHTML=`<div class="puzzle-title">${t('bigger')}</div><div style="display:flex;gap:30px;justify-content:center;margin:12px 0;">${opts.map(o=>`<div onclick="ep_checkTextOption('${encodeURIComponent(o)}','${encodeURIComponent(p.correct)}')" style="font-size:78px;cursor:pointer;border:6px solid transparent;border-radius:20px;padding:8px;transition:all 0.15s;">${o}</div>`).join('')}</div><div class="puz-msg" id="puzMsg"></div>`;
+  }
+  else if(type==='count_shapes'){
+    const fruit=['🌟','⭐','❤️','🔵','🟢','🟡'][currentLevel%6];
+    const rc=1+Math.floor(Math.random()*5);const w1=rc===1?2:rc-1,w2=rc===5?4:rc+1;
+    const opts=[rc,w1,w2].sort(()=>Math.random()-0.5);
+    box.innerHTML=`<div class="puzzle-title">${t('howMany')}${fruit}?</div><div style="font-size:42px;letter-spacing:4px;margin:10px 0;word-break:break-all;line-height:1.3;">${fruit.repeat(rc)}</div><div style="display:flex;gap:14px;justify-content:center;margin:8px 0;">${opts.map(n=>`<div onclick="ep_checkNumber(${n},${rc})" id="numopt${n}" style="font-family:'Nunito',sans-serif;font-weight:900;font-size:46px;background:#E0F2F1;border-radius:17px;width:72px;height:72px;display:flex;align-items:center;justify-content:center;cursor:pointer;border:5px solid #80CBC4;box-shadow:0 4px 10px rgba(0,0,0,0.1);transition:all 0.15s;">${n}</div>`).join('')}</div><div class="puz-msg" id="puzMsg"></div>`;
+  }
+  else if(type==='memory_tap'){
+    // Show 3 items in a row, then ask which was in the middle
+    const rows=[['🍎','🍊','🍋'],['🐶','🐱','🐭'],['🚀','⭐','🌙'],['🌸','🌼','🌻'],['🔴','🔵','🟡'],['🐸','🐢','🦋']];
+    const row=rows[currentLevel%rows.length];const mid=row[1];
+    const decoy=row[0];const decoy2=row[2];
+    const opts=[mid,decoy,decoy2];shuffle(opts);
+    box.innerHTML=`<div class="puzzle-title">${lang==='ru'?'Что было посередине?':'What was in the middle?'}</div><div style="font-size:58px;margin:10px 0;letter-spacing:8px;">${row[0]} ${row[1]} ${row[2]}</div><div style="font-size:16px;color:#888;margin-bottom:10px;">${lang==='ru'?'Запомни, потом нажми!':'Remember, then tap!'}</div><div style="display:flex;gap:16px;justify-content:center;">${opts.map(o=>`<div onclick="ep_checkTextOption('${encodeURIComponent(o)}','${encodeURIComponent(mid)}')" style="font-size:58px;cursor:pointer;border:6px solid transparent;border-radius:18px;padding:6px;transition:all 0.15s;">${o}</div>`).join('')}</div><div class="puz-msg" id="puzMsg"></div>`;
+  }
+  else if(type==='add_simple'){
+    const n1=1+Math.floor(Math.random()*4);const n2=1+Math.floor(Math.random()*4);const ans=n1+n2;
+    const w1=ans-1<1?ans+2:ans-1;const w2=ans+1>9?ans-2:ans+1;
+    const opts=[ans,w1,w2].sort(()=>Math.random()-0.5);
+    box.innerHTML=`<div class="puzzle-title">${t('simpleAdd')} ${n1} ${t('plus')} ${n2}?</div><div style="font-size:52px;margin:8px 0;">${'⭐'.repeat(n1)}  +  ${'🌟'.repeat(n2)}</div><div style="display:flex;gap:14px;justify-content:center;margin:8px 0;">${opts.map(n=>`<div onclick="ep_checkNumber(${n},${ans})" id="numopt${n}" style="font-family:'Nunito',sans-serif;font-weight:900;font-size:46px;background:#FFF8E0;border-radius:17px;width:72px;height:72px;display:flex;align-items:center;justify-content:center;cursor:pointer;border:5px solid #FFCC44;box-shadow:0 4px 10px rgba(0,0,0,0.1);transition:all 0.15s;">${n}</div>`).join('')}</div><div class="puz-msg" id="puzMsg"></div>`;
+  }
+  else if(type==='complete_seq'){
+    const seqs=[{s:['1','2','?','4'],ans:'3'},{s:['2','4','?','8'],ans:'6'},{s:['A','B','?','D'],ans:'C'},{s:['🌱','🌿','?','🌳'],ans:'🌲'},{s:['🐣','🐥','?','🐔'],ans:'🐤'},{s:['1','3','5','?'],ans:'7'}];
+    const sq=seqs[currentLevel%seqs.length];
+    const gapIdx=sq.s.indexOf('?');
+    const w1str=sq.ans==='3'?'5':sq.ans==='6'?'5':sq.ans==='C'?'E':sq.ans==='🌲'?'🌸':sq.ans==='🐤'?'🦅':'9';
+    const w2str=sq.ans==='3'?'1':sq.ans==='6'?'7':sq.ans==='C'?'A':sq.ans==='🌲'?'🌵':sq.ans==='🐤'?'🐧':'3';
+    const opts=[sq.ans,w1str,w2str];shuffle(opts);
+    box.innerHTML=`<div class="puzzle-title">${t('whatMissing')}</div><div style="font-size:36px;margin:10px 0;letter-spacing:4px;">${sq.s.join(' → ')}</div><div style="display:flex;gap:14px;justify-content:center;margin:10px 0;">${opts.map(o=>`<div onclick="ep_checkTextOption('${encodeURIComponent(o)}','${encodeURIComponent(sq.ans)}')" style="font-family:'Nunito',sans-serif;font-weight:900;font-size:34px;background:#E8F5E9;border:4px solid #66BB6A;border-radius:18px;width:74px;height:74px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.15s;">${o}</div>`).join('')}</div><div class="puz-msg" id="puzMsg"></div>`;
+  }
+  else { // shadow_match fallback → count shapes
+    const fruit='🔶';const rc=2+Math.floor(Math.random()*4);const w1=rc-1,w2=rc+1;
+    const opts=[rc,w1,w2].sort(()=>Math.random()-0.5);
+    box.innerHTML=`<div class="puzzle-title">${t('howMany')}${fruit}?</div><div style="font-size:44px;letter-spacing:5px;margin:10px 0;word-break:break-all;">${fruit.repeat(rc)}</div><div style="display:flex;gap:14px;justify-content:center;margin:8px 0;">${opts.map(n=>`<div onclick="ep_checkNumber(${n},${rc})" id="numopt${n}" style="font-family:'Nunito',sans-serif;font-weight:900;font-size:46px;background:#E0F2F1;border-radius:17px;width:72px;height:72px;display:flex;align-items:center;justify-content:center;cursor:pointer;border:5px solid #80CBC4;box-shadow:0 4px 10px rgba(0,0,0,0.1);">${n}</div>`).join('')}</div><div class="puz-msg" id="puzMsg"></div>`;
   }
 }
 function closePuzzle(success){document.getElementById('puzzleOverlay').classList.remove('active');if(success){puzzleSolved=true;setTimeout(()=>doLevelComplete(),400);}}
-function checkColor(chosen,correct){if(chosen===correct){document.getElementById('colorMsg').textContent=t('correct');playCollect();setTimeout(()=>closePuzzle(true),700);}else{document.getElementById('colorMsg').textContent=t('tryAgain');const cc2=document.querySelectorAll('.color-circle');cc2[chosen].style.opacity='0.35';cc2[chosen].style.pointerEvents='none';}}
+
+// Exit puzzle check functions
+function ep_checkColor(chosen,correct){
+  const msg=document.getElementById('puzMsg');
+  if(chosen===correct){msg.textContent=t('correct');msg.style.color='#00796B';playCollect();setTimeout(()=>closePuzzle(true),700);}
+  else{msg.textContent=t('tryAgain');msg.style.color='#CC2200';const cc2=document.querySelectorAll('.color-circle');cc2[chosen].style.opacity='0.3';cc2[chosen].style.pointerEvents='none';}
+}
+function ep_checkNumber(chosen,correct){
+  const el=document.getElementById('numopt'+chosen);const msg=document.getElementById('puzMsg');
+  if(chosen===correct){if(el){el.style.background='#AAFFAA';el.style.border='5px solid #44CC44';}msg.textContent=t('wellDone');msg.style.color='#00796B';playCollect();setTimeout(()=>closePuzzle(true),700);}
+  else{if(el){el.style.background='#FFAAAA';el.style.border='5px solid #CC4444';}msg.textContent=t('tryAgain');msg.style.color='#CC2200';setTimeout(()=>{if(el){el.style.background='';el.style.border='5px solid #DDD';}},500);}
+}
+function ep_checkOdd(chosen,correct){
+  const el=document.getElementById('odd'+chosen);const msg=document.getElementById('puzMsg');
+  if(chosen===correct){el.style.border='6px solid #44CC44';el.style.background='rgba(170,255,170,0.4)';msg.textContent=t('correct');msg.style.color='#00796B';playCollect();setTimeout(()=>closePuzzle(true),700);}
+  else{el.style.border='6px solid #FF4444';el.style.background='rgba(255,170,170,0.4)';msg.textContent=t('tryAgain');msg.style.color='#CC2200';setTimeout(()=>{el.style.border='5px solid transparent';el.style.background='';},500);}
+}
+function ep_checkTextOption(chosenEnc,correctEnc){
+  const chosen=decodeURIComponent(chosenEnc),correct=decodeURIComponent(correctEnc);
+  const msg=document.getElementById('puzMsg');
+  if(chosen===correct){msg.textContent=t('correct');msg.style.color='#00796B';playCollect();setTimeout(()=>closePuzzle(true),700);}
+  else{msg.textContent=t('tryAgain');msg.style.color='#CC2200';}
+}
+function ep_clickApple(i,ok,needed){
+  const el=document.getElementById('ap'+i);if(!el||el.dataset.done)return;const msg=document.getElementById('puzMsg');
+  if(ok){el.dataset.done='1';el.style.filter='drop-shadow(0 0 13px #FF6600)';el.style.transform='scale(1.25)';_pickCount++;playCollect();if(_pickCount>=needed){msg.textContent=t('wellDone');msg.style.color='#00796B';setTimeout(()=>{_pickCount=0;closePuzzle(true);},700);}}
+  else{el.style.animation='shake 0.3s';msg.textContent=t('notThat');msg.style.color='#CC2200';setTimeout(()=>el.style.animation='',350);}
+}
+function ep_clickPiece(prefix,i,emojiEnc,orderEnc){
+  const emoji=decodeURIComponent(emojiEnc),order=orderEnc.split(',').map(decodeURIComponent);
+  const count=window._miniPuzzleCount||0,el=document.getElementById(prefix+i);const msg=document.getElementById('puzMsg');
+  if(!el||el.dataset.done)return;
+  if(emoji===order[count]){el.classList.add('correct');el.dataset.done='1';window._miniPuzzleCount=count+1;playCollect();if(window._miniPuzzleCount>=order.length){msg.textContent=t('amazing');msg.style.color='#00796B';setTimeout(()=>closePuzzle(true),700);}}
+  else{el.classList.add('wrong');msg.textContent=t('tryAgain');msg.style.color='#CC2200';setTimeout(()=>el.classList.remove('wrong'),400);}
+}
+function ep_clickColorCircle(i,ok,needed){
+  const el=document.getElementById('cc'+i);if(!el||el.dataset.done)return;const msg=document.getElementById('puzMsg');
+  if(ok){el.dataset.done='1';el.style.transform='scale(1.2)';el.style.boxShadow='0 0 18px #FFD700';el.style.border='6px solid #FFD700';_pickCount++;playCollect();if(_pickCount>=needed){msg.textContent=t('wellDone');msg.style.color='#00796B';setTimeout(()=>{_pickCount=0;closePuzzle(true);},700);}}
+  else{el.style.animation='shake 0.3s';msg.textContent=t('notThat');msg.style.color='#CC2200';setTimeout(()=>el.style.animation='',350);}
+}
 function setupDrag(){
   const key=document.getElementById('dragKey'),lock=document.getElementById('lockTarget');let dragging=false,ox=0,oy=0;
   function gp(e){const t2=e.touches?e.touches[0]:e;const r=document.getElementById('dragArea').getBoundingClientRect();return{x:t2.clientX-r.left,y:t2.clientY-r.top};}
   function start(e){e.preventDefault();dragging=true;const p=gp(e);ox=p.x-key.offsetLeft;oy=p.y-key.offsetTop;}
   function move(e){if(!dragging)return;e.preventDefault();const p=gp(e);key.style.left=Math.max(0,p.x-ox)+'px';key.style.top=Math.max(0,p.y-oy)+'px';}
-  function end(e){if(!dragging)return;dragging=false;const kr=key.getBoundingClientRect(),lr=lock.getBoundingClientRect();const ov=!(kr.right<lr.left||kr.left>lr.right||kr.bottom<lr.top||kr.top>lr.bottom);if(ov){document.getElementById('dragMsg').textContent=t('unlocked');lock.textContent='🔓';key.textContent='✨';playCollect();setTimeout(()=>closePuzzle(true),700);}}
-  key.addEventListener('mousedown',start);window.addEventListener('mousemove',move);window.addEventListener('mouseup',end);key.addEventListener('touchstart',start,{passive:false});window.addEventListener('touchmove',move,{passive:false});window.addEventListener('touchend',end);
+  function end(e){if(!dragging)return;dragging=false;const kr=key.getBoundingClientRect(),lr=lock.getBoundingClientRect();const ov=!(kr.right<lr.left||kr.left>lr.right||kr.bottom<lr.top||kr.top>lr.bottom);if(ov){const msg=document.getElementById('puzMsg');msg.textContent=t('unlocked');msg.style.color='#00796B';lock.textContent='🔓';key.textContent='✨';playCollect();setTimeout(()=>closePuzzle(true),700);}}
+  key.addEventListener('mousedown',start);window.addEventListener('mousemove',move);window.addEventListener('mouseup',end);
+  key.addEventListener('touchstart',start,{passive:false});window.addEventListener('touchmove',move,{passive:false});window.addEventListener('touchend',end);
 }
-function clickApple(i,ok,needed){
-  const el=document.getElementById('ap'+i);if(!el||el.dataset.done)return;
-  if(ok){el.dataset.done='1';el.style.filter='drop-shadow(0 0 13px #FF6600)';el.style.transform='scale(1.25)';appleSelectedCount++;playCollect();if(appleSelectedCount>=needed){document.getElementById('countMsg').textContent=t('wellDone');setTimeout(()=>{appleSelectedCount=0;closePuzzle(true);},700);}}
-  else{el.style.animation='shake 0.3s';document.getElementById('countMsg').textContent=t('notThat');setTimeout(()=>el.style.animation='',350);}
-}
-function clickPiece(prefix,i,emoji,orderStr){
-  const order=orderStr.split(','),count=window._miniPuzzleCount||0,el=document.getElementById(prefix+i);
-  if(!el||el.dataset.done)return;
-  if(emoji===order[count]){el.classList.add('correct');el.dataset.done='1';window._miniPuzzleCount=count+1;playCollect();if(window._miniPuzzleCount>=order.length){document.getElementById('puzzleMsg').textContent=t('amazing');setTimeout(()=>closePuzzle(true),700);}}
-  else{el.classList.add('wrong');document.getElementById('puzzleMsg').textContent=t('tryAgain');setTimeout(()=>el.classList.remove('wrong'),400);}
-}
-function checkOdd(chosen,correct){const el=document.getElementById('odd'+chosen);if(chosen===correct){el.style.border='6px solid #44CC44';el.style.background='#CCFFCC';document.getElementById('oddMsg').textContent=t('correct');playCollect();setTimeout(()=>closePuzzle(true),700);}else{el.style.border='6px solid #FF4444';el.style.background='#FFCCCC';document.getElementById('oddMsg').textContent=t('tryAgain');setTimeout(()=>{el.style.border='5px solid transparent';el.style.background='';},500);}}
-function checkNumber(chosen,correct){const el=document.getElementById('numopt'+chosen);if(chosen===correct){if(el){el.style.background='#AAFFAA';el.style.border='5px solid #44CC44';}document.getElementById('numMsg').textContent=t('wellDone');playCollect();setTimeout(()=>closePuzzle(true),700);}else{if(el){el.style.background='#FFAAAA';el.style.border='5px solid #CC4444';}document.getElementById('numMsg').textContent=t('tryAgain');setTimeout(()=>{if(el){el.style.background='';el.style.border='5px solid #DDD';}},500);}}
-function clickColorCircle(i,ok,needed){const el=document.getElementById('cc'+i);if(!el||el.dataset.done)return;if(ok){el.dataset.done='1';el.style.transform='scale(1.2)';el.style.boxShadow='0 0 18px #FFD700';el.style.border='6px solid #FFD700';appleSelectedCount++;playCollect();if(appleSelectedCount>=needed){document.getElementById('cc3Msg').textContent=t('wellDone');setTimeout(()=>{appleSelectedCount=0;closePuzzle(true);},700);}}else{el.style.animation='shake 0.3s';document.getElementById('cc3Msg').textContent=t('notThat');setTimeout(()=>el.style.animation='',350);}}
 
-// ===== CONFETTI (auto-stop with fade) =====
+// ===== CONFETTI =====
 let confettiRaf=null;
 const confParts=[];
 function startConfetti(durationMs){
