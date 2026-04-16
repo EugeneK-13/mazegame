@@ -111,6 +111,7 @@ body{font-family:'Nunito',sans-serif;overflow:hidden;width:100vw;height:100vh;ba
     <div style="display:flex;gap:12px;align-items:center;">
       <button id="musicBtn" onclick="toggleMusic()">🎵</button>
       <button id="langBtn" onclick="toggleLang()">🇷🇺 RU</button>
+      <button id="bugBtn" onclick="reportBug()" style="font-family:'Nunito',sans-serif;font-weight:900;font-size:15px;background:white;border:3px solid #FF7043;border-radius:18px;padding:7px 12px;cursor:pointer;color:#FF5722;box-shadow:0 3px 8px rgba(0,0,0,0.12);flex-shrink:0;">🐛 Bug</button>
     </div>
   </div>
 </div>
@@ -160,6 +161,7 @@ body{font-family:'Nunito',sans-serif;overflow:hidden;width:100vw;height:100vh;ba
 <div id="victoryScreen" class="screen sky-bg">
   <div class="victory-emoji">🎉</div>
   <div class="victory-title" id="txtVictory">Level Complete!</div>
+  <div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:22px;color:#E0F2F1;text-shadow:2px 2px 0 #004D40;" id="victoryLevelNum">Level 1</div>
   <div style="font-size:46px;" id="victoryStars">⭐⭐⭐</div>
   <div style="font-family:'Nunito',sans-serif;font-weight:700;font-size:20px;color:#B2DFDB;" id="txtAutoNext">Next in 4...</div>
   <div class="auto-next-bar"><div class="auto-next-fill" id="autoNextFill" style="width:100%;"></div></div>
@@ -258,6 +260,29 @@ function playStep(){if(musicOn)playTone(280+Math.random()*60,0.04,'sine',0.04);}
 function playBump(){playTone(120,0.08,'square',0.15);}
 function playAlert(){playTone(330,0.15,'square',0.25);setTimeout(()=>playTone(220,0.15,'square',0.2),160);}
 function toggleMusic(){musicOn=!musicOn;document.querySelectorAll('#musicBtn,#musicBtn2').forEach(b=>b.textContent=musicOn?'🎵':'🔇');}
+function reportBug(){
+  const tg=window.Telegram?.WebApp;
+  const user=tg?.initDataUnsafe?.user;
+  const userName=user?(user.username?'@'+user.username:(user.first_name||'unknown')):'unknown';
+  const userId=user?user.id:'?';
+  const lvl='Level '+(currentLevel+1);
+  const text='🐛 Bug Report — Fun Maze\n👤 '+userName+' (id:'+userId+')\n🎮 '+lvl+'\n⏱️ '+new Date().toLocaleString();
+  const btn=document.getElementById('bugBtn');
+  btn.textContent='⏳';btn.disabled=true;
+  fetch('https://api.telegram.org/bot8654893124:AAHLxrQ2RMagzK9MfBVg5EW8DEKlQyPzz8U/sendMessage',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({chat_id:'-1003976023787',text:text})
+  }).then(r=>r.json()).then(d=>{
+    if(d.ok){btn.textContent='✅ Sent!';btn.style.borderColor='#4CAF50';btn.style.color='#388E3C';}
+    else{btn.textContent='❌ Error';btn.style.borderColor='#f44336';btn.style.color='#f44336';}
+    btn.disabled=false;
+    setTimeout(()=>{btn.textContent='🐛 Bug';btn.style.borderColor='#FF7043';btn.style.color='#FF5722';},3000);
+  }).catch(()=>{
+    btn.textContent='❌ Error';btn.disabled=false;
+    setTimeout(()=>{btn.textContent='🐛 Bug';btn.style.borderColor='#FF7043';btn.style.color='#FF5722';},3000);
+  });
+}
 
 // ===== CHARS =====
 const CHARS=['🐰','🐶','🏎️','🤡','👶'];
@@ -797,8 +822,16 @@ function buildLevelGrid(){
   const grid=document.getElementById('levelGrid');grid.innerHTML='';
   for(let i=0;i<30;i++){
     const btn=document.createElement('div');btn.className='level-btn';
-    btn.innerHTML=`<div class="level-num">${i+1}</div><div class="level-stars">${'⭐'.repeat(Math.min(Math.ceil((i+1)/6),5))}</div><div class="level-name">${LEVEL_THEMES[i]}</div>`;
-    btn.onclick=()=>startLevel(i);grid.appendChild(btn);
+    // Levels 0-3 always unlocked; level 4+ requires previous completed
+    const locked=i>=4&&!completedLevels[i-1];
+    if(locked){
+      btn.style.cssText='opacity:0.45;filter:grayscale(0.7);cursor:not-allowed;';
+      btn.innerHTML=`<div class="level-num" style="color:#999;">${i+1}</div><div class="level-stars">🔒</div><div class="level-name">${LEVEL_THEMES[i]}</div>`;
+    } else {
+      btn.innerHTML=`<div class="level-num">${i+1}</div><div class="level-stars">${'⭐'.repeat(Math.min(Math.ceil((i+1)/6),5))}</div><div class="level-name">${LEVEL_THEMES[i]}</div>`;
+      btn.onclick=()=>startLevel(i);
+    }
+    grid.appendChild(btn);
   }
 }
 function selectChar(i){selectedChar=i;document.querySelectorAll('.char-card').forEach((c,j)=>c.classList.toggle('selected',i===j));setTimeout(showLevelSelect,300);}
@@ -921,6 +954,7 @@ function clearAutoNext(){if(autoNextTimer){clearTimeout(autoNextTimer);autoNextT
 function showVictory(){
   stopLoop();stopConfetti();showScreen('victoryScreen');
   document.getElementById('victoryStars').textContent='⭐'.repeat(Math.min(Math.ceil((currentLevel+1)/6),5)+1);
+  document.getElementById('victoryLevelNum').textContent=(lang==='ru'?'Уровень ':'Level ')+(currentLevel+1);
   startConfetti(4500);playWin();
   const totalMs=4500,fill=document.getElementById('autoNextFill'),lbl=document.getElementById('txtAutoNext');
   let remaining=4;lbl.textContent=t('autoNext')+remaining+'...';
